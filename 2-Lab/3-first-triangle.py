@@ -2,17 +2,8 @@ from OpenGL.GL import *
 from glfw.GLFW import *
 import glm
 
-def render():
-    # glClear(GL_COLOR_BUFFER_BIT)
-    # glLoadIdentity()
-    # glBegin(GL_TRIANGLES)
-    # glVertex2f(0.0, 1.0)
-    # glVertex2f(-1.0,-1.0)
-    # glVertex2f(1.0,-1.0)
-    # glEnd()
-    pass
-
-vertexShaderSource = """#version 330 core
+vertexShaderSource = '''
+#version 330 core
 layout (location = 0) in vec3 aPos;
 void main()
 {
@@ -20,15 +11,16 @@ void main()
    gl_Position.xyz = aPos;
    gl_Position.w = 1.0;
 }
-"""
+'''
 
-fragmentShaderSource = """#version 330 core
+fragmentShaderSource = '''
+#version 330 core
 out vec4 FragColor;
 void main()
 {
    FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 }
-"""
+'''
 
 def key_callback(window, key, scancode, action, mods):
     if key==GLFW_KEY_ESCAPE and action==GLFW_PRESS:
@@ -74,11 +66,13 @@ def main():
     if (not success):
         infoLog = glGetShaderInfoLog(fragmentShader)
         print("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" + infoLog.decode())
+
     # link shaders
     shaderProgram = glCreateProgram()
     glAttachShader(shaderProgram, vertexShader)
     glAttachShader(shaderProgram, fragmentShader)
     glLinkProgram(shaderProgram)
+
     # check for linking errors
     success = glGetProgramiv(shaderProgram, GL_LINK_STATUS)
     if (not success):
@@ -113,6 +107,9 @@ def main():
         # update
 
         # render
+        # glClearColor(0.2, 0.3, 0.3, 1.0)
+        glClear(GL_COLOR_BUFFER_BIT)
+
         glUseProgram(shaderProgram)
         glBindVertexArray(vao)
         glDrawArrays(GL_TRIANGLES, 0, 3)
