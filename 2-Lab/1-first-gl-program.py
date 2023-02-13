@@ -15,7 +15,7 @@ def main():
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE) # for macOS
 
     # create a window and OpenGL context
-    window = glfwCreateWindow(640, 480, '1-first-gl-program', None, None)
+    window = glfwCreateWindow(800, 600, '1-first-gl-program', None, None)
     if not window:
         glfwTerminate()
         return
