@@ -2,7 +2,7 @@ from OpenGL.GL import *
 from glfw.GLFW import *
 import glm
 
-vertexShaderSource = '''
+g_vertex_shader_src = '''
 #version 330 core
 layout (location = 0) in vec3 aPos;
 void main()
@@ -13,7 +13,7 @@ void main()
 }
 '''
 
-fragmentShaderSource = '''
+g_fragment_shader_src = '''
 #version 330 core
 out vec4 FragColor;
 void main()
@@ -21,6 +21,49 @@ void main()
    FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 '''
+
+def load_shaders(vertex_shader_source, fragment_shader_source):
+    # build and compile our shader program
+    # ------------------------------------
+    # vertex shader
+    vertex_shader = glCreateShader(GL_VERTEX_SHADER)
+    glShaderSource(vertex_shader, vertex_shader_source)
+    glCompileShader(vertex_shader)
+    
+    # check for shader compile errors
+    success = glGetShaderiv(vertex_shader, GL_COMPILE_STATUS)
+    if (not success):
+        infoLog = glGetShaderInfoLog(vertex_shader)
+        print("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" + infoLog.decode())
+        
+    # fragment shader
+    fragment_shader = glCreateShader(GL_FRAGMENT_SHADER)
+    glShaderSource(fragment_shader, fragment_shader_source)
+    glCompileShader(fragment_shader)
+    
+    # check for shader compile errors
+    success = glGetShaderiv(fragment_shader, GL_COMPILE_STATUS)
+    if (not success):
+        infoLog = glGetShaderInfoLog(fragment_shader)
+        print("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" + infoLog.decode())
+
+    # link shaders
+    shaderProgram = glCreateProgram()
+    glAttachShader(shaderProgram, vertex_shader)
+    glAttachShader(shaderProgram, fragment_shader)
+    glLinkProgram(shaderProgram)
+
+    # check for linking errors
+    success = glGetProgramiv(shaderProgram, GL_LINK_STATUS)
+    if (not success):
+        infoLog = glGetProgramInfoLog(shaderProgram)
+        print("ERROR::SHADER::PROGRAM::LINKING_FAILED\n" + infoLog.decode())
+        
+    glDeleteShader(vertex_shader)
+    glDeleteShader(fragment_shader)
+
+    return shaderProgram
+
 
 def key_callback(window, key, scancode, action, mods):
     if key==GLFW_KEY_ESCAPE and action==GLFW_PRESS:
@@ -43,44 +86,8 @@ def main():
 
     glfwMakeContextCurrent(window)
 
-    # build and compile our shader program
-    # ------------------------------------
-    # vertex shader
-    vertexShader = glCreateShader(GL_VERTEX_SHADER)
-    glShaderSource(vertexShader, vertexShaderSource)
-    glCompileShader(vertexShader)
-    
-    # check for shader compile errors
-    success = glGetShaderiv(vertexShader, GL_COMPILE_STATUS)
-    if (not success):
-        infoLog = glGetShaderInfoLog(vertexShader)
-        print("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" + infoLog.decode())
-        
-    # fragment shader
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER)
-    glShaderSource(fragmentShader, fragmentShaderSource)
-    glCompileShader(fragmentShader)
-    
-    # check for shader compile errors
-    success = glGetShaderiv(fragmentShader, GL_COMPILE_STATUS)
-    if (not success):
-        infoLog = glGetShaderInfoLog(fragmentShader)
-        print("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" + infoLog.decode())
-
-    # link shaders
-    shaderProgram = glCreateProgram()
-    glAttachShader(shaderProgram, vertexShader)
-    glAttachShader(shaderProgram, fragmentShader)
-    glLinkProgram(shaderProgram)
-
-    # check for linking errors
-    success = glGetProgramiv(shaderProgram, GL_LINK_STATUS)
-    if (not success):
-        infoLog = glGetProgramInfoLog(shaderProgram)
-        print("ERROR::SHADER::PROGRAM::LINKING_FAILED\n" + infoLog.decode())
-        
-    glDeleteShader(vertexShader)
-    glDeleteShader(fragmentShader)
+    # load shaders
+    shaderProgram = load_shaders(g_vertex_shader_src, g_fragment_shader_src)
 
     # register key callback for escape key
     glfwSetKeyCallback(window, key_callback);
