@@ -4,7 +4,10 @@ import glm
 
 g_vertex_shader_src = '''
 #version 330 core
-layout (location = 0) in vec3 aPos;  // input vertex position. its attribute index is 0.
+
+// input vertex position. its attribute index is 0.
+layout (location = 0) in vec3 aPos; 
+
 void main()
 {
     // gl_Position: built-in output variable of type vec4 to which vertex position in clip space is assigned.
@@ -17,10 +20,14 @@ void main()
 
 g_fragment_shader_src = '''
 #version 330 core
+
+// output fragment color.
 out vec4 FragColor;
+
 void main()
 {
-   FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    // set the fragment color to white. fragment color output type should be vec4.
+    FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 '''
 
