@@ -1,6 +1,7 @@
 from OpenGL.GL import *
 from glfw.GLFW import *
 import glm
+import numpy as np
 
 g_vertex_shader_src = '''
 #version 330 core
@@ -21,12 +22,12 @@ void main()
 g_fragment_shader_src = '''
 #version 330 core
 
-// output fragment color.
+// output fragment color of type vec4.
 out vec4 FragColor;
 
 void main()
 {
-    // set the fragment color to white. fragment color output type should be vec4.
+    // set the fragment color to white.
     FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 '''
@@ -105,10 +106,11 @@ def main():
     vao = glGenVertexArrays(1)
     glBindVertexArray(vao)
 
+    # prepare vertex data (in main memory)
     vertices = glm.array(glm.float32,
-        -1.0, -1.0, 0.0, # left  
-         1.0, -1.0, 0.0, # right 
-         0.0,  1.0, 0.0  # top
+        -1.0, -1.0, 0.0, # left vertex x, y, z coordinates
+         1.0, -1.0, 0.0, # right vertex x, y, z coordinates
+         0.0,  1.0, 0.0  # top vertex x, y, z coordinates
     )
 
     vbo = glGenBuffers(1)
