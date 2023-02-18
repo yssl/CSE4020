@@ -89,18 +89,17 @@ def main():
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE) # for macOS
 
     # create a window and OpenGL context
-    window = glfwCreateWindow(800, 600, '2-first-triangle', None, None)
+    window = glfwCreateWindow(800, 600, '3-hello-triangle', None, None)
     if not window:
         glfwTerminate()
         return
-
     glfwMakeContextCurrent(window)
+
+    # register event callbacks
+    glfwSetKeyCallback(window, key_callback);
 
     # load shaders
     shader_program = load_shaders(g_vertex_shader_src, g_fragment_shader_src)
-
-    # register key callback for escape key
-    glfwSetKeyCallback(window, key_callback);
 
     # create and bind VAO (vertex array object)
     vao = glGenVertexArrays(1)
