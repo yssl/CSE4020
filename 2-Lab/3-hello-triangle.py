@@ -102,10 +102,6 @@ def main():
     # load shaders
     shader_program = load_shaders(g_vertex_shader_src, g_fragment_shader_src)
 
-    # create and bind VAO (vertex array object)
-    vao = glGenVertexArrays(1)
-    glBindVertexArray(vao)
-
     # prepare vertex data (in main memory)
     vertices = glm.array(glm.float32,
         -1.0, -1.0, 0.0, # left vertex x, y, z coordinates
@@ -113,10 +109,18 @@ def main():
          0.0,  1.0, 0.0  # top vertex x, y, z coordinates
     )
 
-    vbo = glGenBuffers(1)
-    glBindBuffer(GL_ARRAY_BUFFER, vbo)
+    # create and activate VAO (vertex array object)
+    VAO = glGenVertexArrays(1)
+    glBindVertexArray(VAO)
+
+    # create and activate VBO (vertex buffer object)
+    VBO = glGenBuffers(1)
+    glBindBuffer(GL_ARRAY_BUFFER, VBO)
+
+    # copy vertex data to VBO
     glBufferData(GL_ARRAY_BUFFER, vertices.nbytes, vertices.ptr, GL_STATIC_DRAW)
 
+    # configure vertex attributes
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * glm.sizeof(glm.float32), None)
     glEnableVertexAttribArray(0)
 
@@ -129,7 +133,7 @@ def main():
         glClear(GL_COLOR_BUFFER_BIT)
 
         glUseProgram(shader_program)
-        glBindVertexArray(vao)
+        glBindVertexArray(VAO)
         glDrawArrays(GL_TRIANGLES, 0, 3)
 
         # swap front and back buffers
