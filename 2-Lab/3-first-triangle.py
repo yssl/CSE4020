@@ -36,9 +36,9 @@ def load_shaders(vertex_shader_source, fragment_shader_source):
     # ------------------------------------
     
     # vertex shader 
-    vertex_shader = glCreateShader(GL_VERTEX_SHADER)    # create shader
-    glShaderSource(vertex_shader, vertex_shader_source) # specify shader
-    glCompileShader(vertex_shader)                      # compile shader
+    vertex_shader = glCreateShader(GL_VERTEX_SHADER)    # create an empty shader object
+    glShaderSource(vertex_shader, vertex_shader_source) # provide shader source code
+    glCompileShader(vertex_shader)                      # compile the shader object
     
     # check for shader compile errors
     success = glGetShaderiv(vertex_shader, GL_COMPILE_STATUS)
@@ -47,9 +47,9 @@ def load_shaders(vertex_shader_source, fragment_shader_source):
         print("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" + infoLog.decode())
         
     # fragment shader
-    fragment_shader = glCreateShader(GL_FRAGMENT_SHADER)    # create shader
-    glShaderSource(fragment_shader, fragment_shader_source) # specify shader
-    glCompileShader(fragment_shader)                        # compile shader
+    fragment_shader = glCreateShader(GL_FRAGMENT_SHADER)    # create an empty shader object
+    glShaderSource(fragment_shader, fragment_shader_source) # provide shader source code
+    glCompileShader(fragment_shader)                        # compile the shader object
     
     # check for shader compile errors
     success = glGetShaderiv(fragment_shader, GL_COMPILE_STATUS)
@@ -58,10 +58,10 @@ def load_shaders(vertex_shader_source, fragment_shader_source):
         print("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" + infoLog.decode())
 
     # link shaders
-    shader_program = glCreateProgram()               # create program
-    glAttachShader(shader_program, vertex_shader)    # attach shaders to program
+    shader_program = glCreateProgram()               # ceate an empty program object
+    glAttachShader(shader_program, vertex_shader)    # attach the shader objects to the program object
     glAttachShader(shader_program, fragment_shader)
-    glLinkProgram(shader_program)                    # link shaders to program
+    glLinkProgram(shader_program)                    # link the program object
 
     # check for linking errors
     success = glGetProgramiv(shader_program, GL_LINK_STATUS)
