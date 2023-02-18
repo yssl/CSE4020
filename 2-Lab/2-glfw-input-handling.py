@@ -41,10 +41,9 @@ def main():
     if not window:
         glfwTerminate()
         return
-
     glfwMakeContextCurrent(window)
 
-    # register key callback for escape key
+    # register event callbacks
     glfwSetKeyCallback(window, key_callback);
     glfwSetCursorPosCallback(window, cursor_callback)
     glfwSetMouseButtonCallback(window, button_callback)
