@@ -58,7 +58,7 @@ def load_shaders(vertex_shader_source, fragment_shader_source):
         print("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" + infoLog.decode())
 
     # link shaders
-    shader_program = glCreateProgram()               # ceate an empty program object
+    shader_program = glCreateProgram()               # create an empty program object
     glAttachShader(shader_program, vertex_shader)    # attach the shader objects to the program object
     glAttachShader(shader_program, fragment_shader)
     glLinkProgram(shader_program)                    # link the program object
