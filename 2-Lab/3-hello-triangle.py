@@ -1,7 +1,6 @@
 from OpenGL.GL import *
 from glfw.GLFW import *
 import glm
-import numpy as np
 
 g_vertex_shader_src = '''
 #version 330 core
