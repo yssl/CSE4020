@@ -6,14 +6,14 @@ g_vertex_shader_src = '''
 #version 330 core
 
 // input vertex position. its attribute index is 0.
-layout (location = 0) in vec3 aPos; 
+layout (location = 0) in vec3 vin_pos; 
 
 void main()
 {
     // gl_Position: built-in output variable of type vec4 to which vertex position in clip space is assigned.
-    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+    gl_Position = vec4(vin_pos.x, vin_pos.y, vin_pos.z, 1.0);
 
-    // gl_Position.xyz = aPos;
+    // gl_Position.xyz = vin_pos;
     // gl_Position.w = 1.0;
 }
 '''
