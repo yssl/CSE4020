@@ -87,7 +87,7 @@ def main():
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE) # for macOS
 
     # create a window and OpenGL context
-    window = glfwCreateWindow(800, 600, '1-colored-triangle-outin', None, None)
+    window = glfwCreateWindow(800, 800, '1-colored-triangle-outin', None, None)
     if not window:
         glfwTerminate()
         return
