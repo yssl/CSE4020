@@ -104,7 +104,11 @@ def main():
     shader_program = load_shaders(g_vertex_shader_src, g_fragment_shader_src)
 
     # get uniform locations
-    u_ratio_loc = glGetUniformLocation(shader_program, 'u_ratio')
+    u_M_loc = glGetUniformLocation(shader_program, 'u_ratio')
+
+    # M = glm.mat2
+
+    glUniformMatrix2fv(u_M_loc, M)
 
     # prepare vertex data (in main memory)
     vertices = glm.array(glm.float32,
@@ -141,10 +145,6 @@ def main():
         glClear(GL_COLOR_BUFFER_BIT)
 
         glUseProgram(shader_program)
-
-        t = glfwGetTime()
-        ratio = glm.sin(t)
-        glUniform1f(u_ratio_loc, ratio)
 
         glBindVertexArray(VAO)
         glDrawArrays(GL_TRIANGLES, 0, 3)
