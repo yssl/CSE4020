@@ -13,12 +13,17 @@ print()
 #  [0. 1.]]
 
 # numpy indexing: [row_index, col_index]
-print('M_np[0]:', M_np[0])      # returns first row
-print('M_np[0,1]:', M_np[0,1])  # returns element at first row, second col
-print()
+
+# first row
+print('M_np[0]:', M_np[0])
+
+# element at first row, second col
+print('M_np[0,1]:', M_np[0,1])
 
 # M_np[0]: [1. 2.]
 # M_np[0,1]: 2.0
+
+print()
 
 # glm matrix creation
 M_glm = glm.mat2(1., 0.,
@@ -32,9 +37,12 @@ print()
 # [            0 ][            1 ]
 
 # glm indexing: [col_index, row_index]
-print('M_glm[0]:', M_glm[0])     # returns first col
-print('M_glm[0,1]:', M_glm[0,1]) # returns element at second row, first col
 
-# M_glm[0]: mvec2(            1,            0 )
+# first col
+print('M_glm[0]:', M_glm[0])
+
+# element at second row, first col
+print('M_glm[0,1]:', M_glm[0,1])
+
+# M_glm[0]: mvec2( 1, 0 )
 # M_glm[0,1]: 0.0
-
