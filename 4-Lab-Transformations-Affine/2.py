@@ -2,6 +2,7 @@ from OpenGL.GL import *
 from glfw.GLFW import *
 import glm
 import ctypes
+import numpy as np
 
 g_vertex_shader_src = '''
 #version 330 core
@@ -11,11 +12,12 @@ layout (location = 1) in vec3 vin_color;
 
 out vec4 vout_color;
 
-uniform float u_ratio;
+uniform mat2 M;
 
 void main()
 {
     gl_Position = vec4(vin_pos.x, vin_pos.y, 0, 1.0);
+    gl_Position.xy = M * vin_pos.xy;
     vout_color = vec4(vin_color, 1);
 }
 '''
@@ -104,18 +106,40 @@ def main():
     shader_program = load_shaders(g_vertex_shader_src, g_fragment_shader_src)
 
     # get uniform locations
-    u_M_loc = glGetUniformLocation(shader_program, 'u_ratio')
+    M_loc = glGetUniformLocation(shader_program, 'M')
+    
+    # update uniforms 
+    glUseProgram(shader_program)    # updating uniform require you to first activate the shader program 
 
-    # M = glm.mat2
+    # 2.py uniform scale
+    # M = np.array([[1., 2.],
+                  # [0., 1.]])
+    # print(M)
+    # glUniformMatrix2fv(M_loc, 1, GL_TRUE, M)
 
-    glUniformMatrix2fv(u_M_loc, M)
+    M = glm.mat2(1., 2.,
+                 0., 1.)
+    print(M)
+    glUniformMatrix2fv(M_loc, 1, GL_FALSE, glm.value_ptr(M))
+
+    # 3.py animation
+
+    # 4.py linear transforamtions
+
+    # 5.py 4x4 homogenoeous transformations
+
+    # 6.py glm transformation functions
+
+    # 7.py point & vector transformation
+
+    # 8.py interpretation of composite transformations
 
     # prepare vertex data (in main memory)
     vertices = glm.array(glm.float32,
         # position        # color
          0.0, 0.0, 0.0,  1.0, 0.0, 0.0, # v0
-         1.0, 0.0, 0.0,  0.0, 1.0, 0.0, # v1
-         0.0, 1.0, 0.0,  0.0, 0.0, 1.0, # v2
+         0.5, 0.0, 0.0,  0.0, 1.0, 0.0, # v1
+         0.0, 0.5, 0.0,  0.0, 0.0, 1.0, # v2
     )
 
     # create and activate VAO (vertex array object)
