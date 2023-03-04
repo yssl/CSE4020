@@ -12,7 +12,7 @@ print()
 # [[1. 2.]
 #  [0. 1.]]
 
-# numpy matrix indexing: [row_index, col_index]
+# numpy indexing: [row_index, col_index]
 print('M_np[0]:', M_np[0])      # returns first row
 print('M_np[0,1]:', M_np[0,1])  # returns element at first row, second col
 print()
@@ -31,7 +31,7 @@ print()
 # [            1 ][            2 ]
 # [            0 ][            1 ]
 
-# glm matrix indexing: [col_index, row_index]
+# glm indexing: [col_index, row_index]
 print('M_glm[0]:', M_glm[0])     # returns first col
 print('M_glm[0,1]:', M_glm[0,1]) # returns element at second row, first col
 
