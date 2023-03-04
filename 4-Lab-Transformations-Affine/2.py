@@ -112,15 +112,15 @@ def main():
     glUseProgram(shader_program)    # updating uniform require you to first activate the shader program 
 
     # 2.py uniform scale
-    # M = np.array([[1., 2.],
-                  # [0., 1.]])
-    # print(M)
-    # glUniformMatrix2fv(M_loc, 1, GL_TRUE, M)
-
-    M = glm.mat2(1., 2.,
-                 0., 1.)
+    M = np.array([[1., 2.],
+                  [0., 1.]])
     print(M)
-    glUniformMatrix2fv(M_loc, 1, GL_FALSE, glm.value_ptr(M))
+    glUniformMatrix2fv(M_loc, 1, GL_FALSE, M)
+
+    # M = glm.mat2(1., 2.,
+                 # 0., 1.)
+    # print(M)
+    # glUniformMatrix2fv(M_loc, 1, GL_FALSE, glm.value_ptr(M))
 
     # 3.py animation
 
