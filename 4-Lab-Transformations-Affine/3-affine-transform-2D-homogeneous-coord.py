@@ -12,12 +12,16 @@ layout (location = 1) in vec3 vin_color;
 
 out vec4 vout_color;
 
-uniform mat2 M;
+uniform mat3 M;
 
 void main()
 {
-    gl_Position = vec4(vin_pos.x, vin_pos.y, 0, 1.0);
-    gl_Position.xy = M * vin_pos.xy;
+    gl_Position = vec4(0, 0, 0, 1.0);
+
+    vec3 p_in_hcoord = vec3(vin_pos.x, vin_pos.y, 1.0);
+    vec3 p_new_in_hcoord = M * p_in_hcoord;
+
+    gl_Position.xy = p_new_in_hcoord.xy;
     vout_color = vec4(vin_color, 1);
 }
 '''
@@ -111,28 +115,29 @@ def main():
     # update uniforms 
     glUseProgram(shader_program)    # updating uniform require you to first activate the shader program 
 
-    # 2.py uniform scale
-    M = np.array([[1., 2.],
-                  [0., 1.]])
-    print(M)
-    glUniformMatrix2fv(M_loc, 1, GL_FALSE, M)
 
-    # M = glm.mat2(1., 2.,
-                 # 0., 1.)
+    # rotation 30 deg
+    th = np.radians(30)
+    R = np.array([[np.cos(th), -np.sin(th), 0.],
+                  [np.sin(th),  np.cos(th), 0.],
+                  [0.,         0.,          1.]])
+
+    # tranlation by (.5, .2)
+    T = np.array([[1., 0., .5],
+                  [0., 1., .2],
+                  [0., 0., 1.]])
+
+    M = R
+    # M = T
+    # M = R @ T   # '@' is matrix-matrix / matrix-vector multiplication operator
+    # M = T @ R
+
     # print(M)
-    # glUniformMatrix2fv(M_loc, 1, GL_FALSE, glm.value_ptr(M))
+        
+    # note that 'transpose' (3rd parameter) is set to GL_TRUE
+    # because numpy array is row-major.
+    glUniformMatrix3fv(M_loc, 1, GL_TRUE, M)
 
-    # 3.py animation
-
-    # 4.py linear transforamtions
-
-    # 5.py 4x4 homogenoeous transformations
-
-    # 6.py glm transformation functions
-
-    # 7.py point & vector transformation
-
-    # 8.py interpretation of composite transformations
 
     # prepare vertex data (in main memory)
     vertices = glm.array(glm.float32,
