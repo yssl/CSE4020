@@ -16,8 +16,12 @@ uniform mat2 M;
 
 void main()
 {
+    // 3D point in homogeneous coordinates
     gl_Position = vec4(0, 0, 0, 1.0);
+
+    // setting x, y coordinate values of gl_Position
     gl_Position.xy = M * vin_pos.xy;
+
     vout_color = vec4(vin_color, 1);
 }
 '''

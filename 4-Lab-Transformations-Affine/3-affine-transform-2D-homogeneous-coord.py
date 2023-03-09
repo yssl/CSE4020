@@ -16,12 +16,15 @@ uniform mat3 M;
 
 void main()
 {
+    // 3D point in homogeneous coordinates
     gl_Position = vec4(0, 0, 0, 1.0);
 
-    vec3 p_in_hcoord = vec3(vin_pos.x, vin_pos.y, 1.0);
-    vec3 p_new_in_hcoord = M * p_in_hcoord;
+    // 2D points in homogeneous coordinates
+    vec3 p2D_in_hcoord = vec3(vin_pos.x, vin_pos.y, 1.0);
+    vec3 p2D_new_in_hcoord = M * p2D_in_hcoord;
 
-    gl_Position.xy = p_new_in_hcoord.xy;
+    // setting x, y coordinate values of gl_Position
+    gl_Position.xy = p2D_new_in_hcoord.xy;
     vout_color = vec4(vin_color, 1);
 }
 '''
