@@ -25,6 +25,7 @@ void main()
 
     // setting x, y coordinate values of gl_Position
     gl_Position.xy = p2D_new_in_hcoord.xy;
+
     vout_color = vec4(vin_color, 1);
 }
 '''
@@ -100,7 +101,7 @@ def main():
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE) # for macOS
 
     # create a window and OpenGL context
-    window = glfwCreateWindow(800, 800, '1', None, None)
+    window = glfwCreateWindow(800, 800, '3-affine-transform-2D-homogeneous-coord', None, None)
     if not window:
         glfwTerminate()
         return
@@ -115,6 +116,33 @@ def main():
     # get uniform locations
     M_loc = glGetUniformLocation(shader_program, 'M')
     
+    # update uniforms 
+    glUseProgram(shader_program)    # updating uniform require you to first activate the shader program 
+
+
+    # rotation 30 deg
+    th = np.radians(30)
+    R = np.array([[np.cos(th), -np.sin(th), 0.],
+                  [np.sin(th),  np.cos(th), 0.],
+                  [0.,         0.,          1.]])
+
+    # tranlation by (.5, .2)
+    T = np.array([[1., 0., .5],
+                  [0., 1., .2],
+                  [0., 0., 1.]])
+
+    M = R
+    # M = T
+    # M = R @ T   # '@' is matrix-matrix / matrix-vector multiplication operator
+    # M = T @ R
+
+    # print(M)
+        
+    # note that 'transpose' (3rd parameter) is set to GL_TRUE
+    # because numpy array is row-major.
+    glUniformMatrix3fv(M_loc, 1, GL_TRUE, M)
+
+
     # prepare vertex data (in main memory)
     vertices = glm.array(glm.float32,
         # position        # color
@@ -144,39 +172,10 @@ def main():
 
     # loop until the user closes the window
     while not glfwWindowShouldClose(window):
-        # update
-
         # render
         glClear(GL_COLOR_BUFFER_BIT)
 
         glUseProgram(shader_program)
-
-
-        # animating
-        t = glfwGetTime()
-
-        # rotation 30 deg
-        th = np.radians(t*90)
-        R = np.array([[np.cos(th), -np.sin(th), 0.],
-                      [np.sin(th),  np.cos(th), 0.],
-                      [0.,         0.,          1.]])
-
-        # tranlation by (.5, .2)
-        T = np.array([[1., 0., np.sin(t)],
-                      [0., 1., .2],
-                      [0., 0., 1.]])
-
-        M = R
-        # M = T
-        # M = R @ T   # '@' is matrix-matrix / matrix-vector multiplication operator
-        # M = T @ R
-
-        # print(M)
-            
-        # note that 'transpose' (3rd parameter) is set to GL_TRUE
-        # because numpy array is row-major.
-        glUniformMatrix3fv(M_loc, 1, GL_TRUE, M)
-
 
         glBindVertexArray(VAO)
         glDrawArrays(GL_TRIANGLES, 0, 3)

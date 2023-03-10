@@ -12,19 +12,16 @@ layout (location = 1) in vec3 vin_color;
 
 out vec4 vout_color;
 
-uniform mat3 M;
+uniform mat2 M;
 
 void main()
 {
     // 3D point in homogeneous coordinates
     gl_Position = vec4(0, 0, 0, 1.0);
 
-    // 2D points in homogeneous coordinates
-    vec3 p2D_in_hcoord = vec3(vin_pos.x, vin_pos.y, 1.0);
-    vec3 p2D_new_in_hcoord = M * p2D_in_hcoord;
-
     // setting x, y coordinate values of gl_Position
-    gl_Position.xy = p2D_new_in_hcoord.xy;
+    gl_Position.xy = M * vin_pos.xy;
+
     vout_color = vec4(vin_color, 1);
 }
 '''
@@ -100,7 +97,7 @@ def main():
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE) # for macOS
 
     # create a window and OpenGL context
-    window = glfwCreateWindow(800, 800, '1', None, None)
+    window = glfwCreateWindow(800, 800, '1-linear-transform-2D', None, None)
     if not window:
         glfwTerminate()
         return
@@ -118,29 +115,82 @@ def main():
     # update uniforms 
     glUseProgram(shader_program)    # updating uniform require you to first activate the shader program 
 
+    use_numpy = True
+    # use_numpy = False
 
-    # rotation 30 deg
-    th = np.radians(30)
-    R = np.array([[np.cos(th), -np.sin(th), 0.],
-                  [np.sin(th),  np.cos(th), 0.],
-                  [0.,         0.,          1.]])
+    if(use_numpy):
+        # numpy
 
-    # tranlation by (.5, .2)
-    T = np.array([[1., 0., .5],
-                  [0., 1., .2],
-                  [0., 0., 1.]])
+        # 2x2 identity matrix 
+        # M = np.array([[1., 0.],
+                      # [0., 1.]])   # or
+        M = np.identity(2)
 
-    M = R
-    # M = T
-    # M = R @ T   # '@' is matrix-matrix / matrix-vector multiplication operator
-    # M = T @ R
+        # # uniform scaling
+        # M = np.array([[2., 0.],
+                      # [0., 2.]])
 
-    # print(M)
-        
-    # note that 'transpose' (3rd parameter) is set to GL_TRUE
-    # because numpy array is row-major.
-    glUniformMatrix3fv(M_loc, 1, GL_TRUE, M)
+        # # nonuniform scaling
+        # M = np.array([[2., 0.],
+                      # [0., 1.]])
 
+        # # reflection
+        # M = np.array([[-1., 0],
+                      # [0., 1.]])
+
+        # # shearing in x
+        # M = np.array([[1., 2.],
+                      # [0., 1.]])
+
+        # # rotation
+        # th = np.radians(30)
+        # M = np.array([[np.cos(th), -np.sin(th)],
+                      # [np.sin(th),  np.cos(th)]])
+
+        # print(M)
+
+        # note that 'transpose' (3rd parameter) is set to GL_TRUE
+        # because numpy array is row-major.
+        glUniformMatrix2fv(M_loc, 1, GL_TRUE, M)
+    else:
+        # glm
+
+        # 2x2 identity matrix 
+        # M = glm.mat2(1., 0.,
+                     # 0., 1.)
+        M = glm.mat2() 
+
+        # # uniform scaling
+        # M = glm.mat2(2., 0.,
+                     # 0., 2.)
+
+        # # nonuniform scaling
+        # M = glm.mat2(2., 0.,
+                     # 0., 1.)
+
+        # # reflection
+        # M = glm.mat2(-1., 0.,
+                     # 0., 1.)
+
+        # # shearing in x
+        # # # not this matrix!:
+        # # M = glm.mat2(1., 2.,
+                     # # 0., 1.)
+        # # note that glm matrix is column-major (numpy array is row-major)
+        # # correct matrix is:
+        # M = glm.mat2(1., 0.,
+                     # 2., 1.)
+
+        # # rotation
+        # th = np.radians(30)
+        # M = glm.mat2(np.cos(th), np.sin(th),
+                    # -np.sin(th), np.cos(th))
+
+        # print(M)
+
+        # note that 'transpose' (3rd parameter) is set to GL_FALSE
+        # because glm matrix is column-major.
+        glUniformMatrix2fv(M_loc, 1, GL_FALSE, glm.value_ptr(M))
 
     # prepare vertex data (in main memory)
     vertices = glm.array(glm.float32,
@@ -171,8 +221,6 @@ def main():
 
     # loop until the user closes the window
     while not glfwWindowShouldClose(window):
-        # update
-
         # render
         glClear(GL_COLOR_BUFFER_BIT)
 
