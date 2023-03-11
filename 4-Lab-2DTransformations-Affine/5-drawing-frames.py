@@ -91,7 +91,7 @@ def key_callback(window, key, scancode, action, mods):
     if key==GLFW_KEY_ESCAPE and action==GLFW_PRESS:
         glfwSetWindowShouldClose(window, GLFW_TRUE);
 
-def initialize_triangle_vao():
+def prepare_vao_triangle():
     # prepare vertex data (in main memory)
     vertices = glm.array(glm.float32,
         # position        # color
@@ -121,7 +121,7 @@ def initialize_triangle_vao():
 
     return VAO
 
-def initialize_frame_vao():
+def prepare_vao_frame():
     # prepare vertex data (in main memory)
     vertices = glm.array(glm.float32,
         # position        # color
@@ -181,8 +181,8 @@ def main():
     M_loc = glGetUniformLocation(shader_program, 'M')
     
     # initialize vaos
-    vao_triangle = initialize_triangle_vao()
-    vao_frame = initialize_frame_vao()
+    vao_triangle = prepare_vao_triangle()
+    vao_frame = prepare_vao_frame()
 
     # loop until the user closes the window
     while not glfwWindowShouldClose(window):
