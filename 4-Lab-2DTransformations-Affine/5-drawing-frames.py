@@ -180,7 +180,7 @@ def main():
     # get uniform locations
     M_loc = glGetUniformLocation(shader_program, 'M')
     
-    # initialize vaos
+    # prepare vaos
     vao_triangle = prepare_vao_triangle()
     vao_frame = prepare_vao_frame()
 
