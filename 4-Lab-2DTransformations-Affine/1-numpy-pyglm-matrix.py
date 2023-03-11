@@ -41,7 +41,7 @@ print()
 # first col
 print('M_glm[0]:', M_glm[0])
 
-# element at second row, first col
+# element at first col, second row
 print('M_glm[0,1]:', M_glm[0,1])
 
 # M_glm[0]: mvec2( 1, 0 )
