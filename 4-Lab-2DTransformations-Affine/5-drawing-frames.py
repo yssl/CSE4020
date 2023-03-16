@@ -221,7 +221,7 @@ def main():
         # print(M)
 
             
-        # current frame: M (triangle's body frame)
+        # current frame: M
         glUniformMatrix3fv(M_loc, 1, GL_TRUE, M)
 
         # draw triangle w.r.t. the current frame
