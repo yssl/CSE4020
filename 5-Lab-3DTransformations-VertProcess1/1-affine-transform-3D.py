@@ -197,27 +197,39 @@ def main():
         # animating
         t = glfwGetTime()
 
-        # rotation 30 deg
+        # rotation
         th = np.radians(t*90)
-        R = np.array([[np.cos(th), -np.sin(th), 0.],
-                      [np.sin(th),  np.cos(th), 0.],
-                      [0.,         0.,          1.]])
+        R = np.array([[np.cos(th), -np.sin(th), 0., 0.],
+                      [np.sin(th),  np.cos(th), 0., 0.],
+                      [0.,         0.,          0., 1.],
+                      [0.,         0.,          0., 1.]])
 
-        # tranlation by (.5, .2)
+        # tranlation
         T = np.array([[1., 0., 0., np.sin(t)],
                       [0., 1., 0., .2],
                       [0., 0., 1., 0.],
                       [0., 0., 0., 1.]])
 
-        # M = R
-        # M = np.eye(4)
-        M = T
-        # M = R @ T   # '@' is matrix-matrix / matrix-vector multiplication operator
+        # scaling
+        S = np.array([[np.sin(t), 0., 0., 0.],
+                      [0., np.sin(t), 0., 0.],
+                      [0., 0., np.sin(t), 0.],
+                      [0., 0., 0., 1.]])
+
+        # shearing
+        H = np.array([[1., np.sin(t), 0., 0.],
+                      [0., 1., 0., 0.],
+                      [0., 0., 0., 0.],
+                      [0., 0., 0., 1.]])
+
+
+        M = R
+        # M = T
+        # M = S
+        # M = H
+        # M = R @ T
         # M = T @ R
 
-        # print(M)
-
-            
         # current local frame: M
         glUniformMatrix4fv(M_loc, 1, GL_TRUE, M)
 
