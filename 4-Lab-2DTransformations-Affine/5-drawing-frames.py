@@ -191,10 +191,10 @@ def main():
 
         glUseProgram(shader_program)
 
-        # current local frame: identity matrix (== global frame)
+        # current frame: I (world frame)
         glUniformMatrix3fv(M_loc, 1, GL_TRUE, np.identity(3))
 
-        # draw current local frame (== global frame)
+        # draw current frame
         glBindVertexArray(vao_frame)
         glDrawArrays(GL_LINES, 0, 6)
 
@@ -213,22 +213,22 @@ def main():
                       [0., 1., .2],
                       [0., 0., 1.]])
 
-        # M = R
+        M = R
         # M = T
         # M = R @ T   # '@' is matrix-matrix / matrix-vector multiplication operator
-        M = T @ R
+        # M = T @ R
 
         # print(M)
 
             
-        # current local frame: M
+        # current frame: M (triangle's body frame)
         glUniformMatrix3fv(M_loc, 1, GL_TRUE, M)
 
-        # draw triangle
+        # draw triangle w.r.t. the current frame
         glBindVertexArray(vao_triangle)
         glDrawArrays(GL_TRIANGLES, 0, 3)
 
-        # draw current local frame
+        # draw current frame
         glBindVertexArray(vao_frame)
         glDrawArrays(GL_LINES, 0, 6)
 
