@@ -187,7 +187,8 @@ def main():
         glUseProgram(shader_program)
 
         # current frame: I (world frame)
-        glUniformMatrix4fv(M_loc, 1, GL_TRUE, np.identity(4))
+        I = np.identity(4)
+        glUniformMatrix4fv(M_loc, 1, GL_TRUE, I)
 
         # draw current frame
         glBindVertexArray(vao_frame)
