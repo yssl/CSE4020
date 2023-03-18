@@ -196,16 +196,24 @@ def main():
     # loop until the user closes the window
     while not glfwWindowShouldClose(window):
         # render
-        glClear(GL_COLOR_BUFFER_BIT)
+
+        # enable depth test (we'll see details later)
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        glEnable(GL_DEPTH_TEST)
 
         glUseProgram(shader_program)
 
+        # projection matrix
+        # use orthogonal projection (we'll see details later)
+        P = glm.ortho(-1,1,-1,1,-1,1)
+
         # view matrix
+        # rotate camera position with g_cam_ang / move camera up & down with g_cam_height
         V = glm.lookAt(glm.vec3(.1*np.sin(g_cam_ang),g_cam_height,.1*np.cos(g_cam_ang)), glm.vec3(0,0,0), glm.vec3(0,1,0))
 
-        # current frame: V*I (now this is the world frame)
+        # current frame: P*V*I (now this is the world frame)
         I = glm.mat4()
-        MVP = V*I
+        MVP = P*V*I
         glUniformMatrix4fv(M_loc, 1, GL_FALSE, glm.value_ptr(MVP))
 
         # draw current frame
@@ -232,8 +240,8 @@ def main():
         # M = R @ T
         # M = T @ R
 
-        # current frame: V*M
-        MVP = V*M
+        # current frame: P*V*M
+        MVP = P*V*M
         glUniformMatrix4fv(M_loc, 1, GL_FALSE, glm.value_ptr(MVP))
 
         # draw triangle w.r.t. the current frame
