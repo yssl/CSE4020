@@ -160,7 +160,7 @@ def main():
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE) # for macOS
 
     # create a window and OpenGL context
-    window = glfwCreateWindow(800, 800, '5-drawing-frames', None, None)
+    window = glfwCreateWindow(800, 800, '1-affine-transform-3D', None, None)
     if not window:
         glfwTerminate()
         return
