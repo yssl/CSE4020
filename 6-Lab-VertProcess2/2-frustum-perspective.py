@@ -263,7 +263,7 @@ def main():
         glEnable(GL_DEPTH_TEST)
 
         # render in "wireframe mode"
-        glPolygonMode( GL_FRONT_AND_BACK, GL_LINE )
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 
         glUseProgram(shader_program)
 
