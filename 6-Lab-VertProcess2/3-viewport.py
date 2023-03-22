@@ -102,6 +102,7 @@ def key_callback(window, key, scancode, action, mods):
 
 def prepare_vao_cube():
     # prepare vertex data (in main memory)
+    # 36 vertices for 12 triangles
     vertices = glm.array(glm.float32,
         # position            color
         -0.5 ,  0.5 ,  0.5 ,  1, 1, 1, # v0
