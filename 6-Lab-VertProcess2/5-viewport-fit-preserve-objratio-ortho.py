@@ -7,6 +7,7 @@ import numpy as np
 g_cam_ang = 0.
 g_cam_height = .1
 
+# now projection matrix P is a global variable so that it can be accessed from main() and framebuffer_size_callback()
 g_P = glm.mat4()
 
 g_vertex_shader_src = '''
