@@ -15,14 +15,14 @@ layout (location = 1) in vec3 vin_color;
 
 out vec4 vout_color;
 
-uniform mat4 M;
+uniform mat4 MVP;
 
 void main()
 {
     // 3D points in homogeneous coordinates
     vec4 p3D_in_hcoord = vec4(vin_pos.xyz, 1.0);
 
-    gl_Position = M * p3D_in_hcoord;
+    gl_Position = MVP * p3D_in_hcoord;
 
     vout_color = vec4(vin_color, 1.);
 }
@@ -187,7 +187,7 @@ def main():
     shader_program = load_shaders(g_vertex_shader_src, g_fragment_shader_src)
 
     # get uniform locations
-    M_loc = glGetUniformLocation(shader_program, 'M')
+    MVP_loc = glGetUniformLocation(shader_program, 'MVP')
     
     # prepare vaos
     vao_triangle = prepare_vao_triangle()
@@ -214,7 +214,7 @@ def main():
         # current frame: P*V*I (now this is the world frame)
         I = glm.mat4()
         MVP = P*V*I
-        glUniformMatrix4fv(M_loc, 1, GL_FALSE, glm.value_ptr(MVP))
+        glUniformMatrix4fv(MVP_loc, 1, GL_FALSE, glm.value_ptr(MVP))
 
         # draw current frame
         glBindVertexArray(vao_frame)
@@ -242,7 +242,7 @@ def main():
 
         # current frame: P*V*M
         MVP = P*V*M
-        glUniformMatrix4fv(M_loc, 1, GL_FALSE, glm.value_ptr(MVP))
+        glUniformMatrix4fv(MVP_loc, 1, GL_FALSE, glm.value_ptr(MVP))
 
         # draw triangle w.r.t. the current frame
         glBindVertexArray(vao_triangle)
