@@ -309,10 +309,10 @@ def main():
         # # try applying rotation
         # M = R
 
-        # # draw triangle w.r.t. the current frame MVP
+        # # draw cube w.r.t. the current frame MVP
         # draw_cube(vao_cube, g_P*V*M, MVP_loc)
 
-        # draw triangle array w.r.t. the current frame MVP
+        # draw cube array w.r.t. the current frame MVP
         draw_cube_array(vao_cube, g_P*V*M, MVP_loc)
 
 
