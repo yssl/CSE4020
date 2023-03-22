@@ -270,12 +270,12 @@ def main():
         # projection matrix
         # perspective projection - try changing arguments
 
-        # frustum
-        # P = glm.frustum(-1,1, -1,1, .1,10)
-        P = glm.frustum(-1,1, -1,1, 1,10)
+        # perspective 
+        P = glm.perspective(45, 1, 1, 10)
 
-        # # perspective 
-        # P = glm.perspective(45, 1, 1, 10)
+        # # frustum
+        # # P = glm.frustum(-1,1, -1,1, .1,10)
+        # P = glm.frustum(-1,1, -1,1, 1,10)
 
         # view matrix
         # rotate camera position with g_cam_ang / move camera up & down with g_cam_height
