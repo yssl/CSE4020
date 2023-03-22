@@ -4,12 +4,6 @@ import glm
 import ctypes
 import numpy as np
 
-INIT_WINDOW_WIDTH = 800
-INIT_WINDOW_HEIGHT = 800
-
-INIT_ORTHO_WIDTH = 10.
-INIT_ORTHO_HEIGHT = 10.
-
 g_cam_ang = 0.
 g_cam_height = .1
 
@@ -113,10 +107,9 @@ def framebuffer_size_callback(window, width, height):
 
     glViewport(0, 0, width, height)
 
-    left2right = width/INIT_WINDOW_WIDTH * INIT_ORTHO_WIDTH
-    top2bottom = height/INIT_WINDOW_HEIGHT * INIT_ORTHO_HEIGHT
-
-    g_P = glm.ortho(-left2right*.5,left2right*.5, -top2bottom*.5,top2bottom*.5, -10,10)
+    ortho_width = 10.
+    ortho_height = ortho_width * height/width
+    g_P = glm.ortho(-ortho_width*.5,ortho_width*.5, -ortho_height*.5,ortho_height*.5, -10,10)
 
 def prepare_vao_cube():
     # prepare vertex data (in main memory)
@@ -256,7 +249,7 @@ def main():
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE) # for macOS
 
     # create a window and OpenGL context
-    window = glfwCreateWindow(INIT_WINDOW_WIDTH, INIT_WINDOW_HEIGHT, '5-viewport-fit-preserve-objsize-ortho', None, None)
+    window = glfwCreateWindow(800, 800, '5-viewport-fit-preserve-objratio-ortho', None, None)
     if not window:
         glfwTerminate()
         return
@@ -280,7 +273,9 @@ def main():
     # glViewport(100,100, 200,200)
 
     # initialize projection matrix
-    g_P = glm.ortho(-INIT_ORTHO_WIDTH*.5,INIT_ORTHO_WIDTH*.5, -INIT_ORTHO_HEIGHT*.5,INIT_ORTHO_HEIGHT*.5, -10,10)
+    ortho_width = 10.
+    ortho_height = ortho_width * 800/800
+    g_P = glm.ortho(-ortho_width*.5,ortho_width*.5, -ortho_height*.5,ortho_height*.5, -10,10)
 
     # loop until the user closes the window
     while not glfwWindowShouldClose(window):
