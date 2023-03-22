@@ -107,8 +107,8 @@ def framebuffer_size_callback(window, width, height):
 
     glViewport(0, 0, width, height)
 
-    ortho_width = 10.
-    ortho_height = ortho_width * height/width
+    ortho_height = 10.
+    ortho_width = ortho_height * width/height
     g_P = glm.ortho(-ortho_width*.5,ortho_width*.5, -ortho_height*.5,ortho_height*.5, -10,10)
 
 def prepare_vao_cube():
@@ -274,8 +274,8 @@ def main():
     # glViewport(100,100, 200,200)
 
     # initialize projection matrix
-    ortho_width = 10.
-    ortho_height = ortho_width * 800/800
+    ortho_height = 10.
+    ortho_width = ortho_height * 800/800    # initial width/height
     g_P = glm.ortho(-ortho_width*.5,ortho_width*.5, -ortho_height*.5,ortho_height*.5, -10,10)
 
     # loop until the user closes the window
