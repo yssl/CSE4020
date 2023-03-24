@@ -65,10 +65,11 @@ void main()
 
 class Node:
     def __init__(self, parent, scale, color):
+        # hierarchy
         self.parent = parent
         self.children = []
         if parent is not None:
-            parent.add_child(self)
+            parent.children.append(self)
 
         # transform
         self.transform = glm.mat4()
@@ -78,18 +79,14 @@ class Node:
         self.scale = scale
         self.color = color
 
-    def add_child(self, child):
-        self.children.append(child)
-
     def set_transform(self, transform):
         self.transform = transform
 
     def update_global_transform(self):
         if self.parent is not None:
-            self.parent_global_transform = self.parent.get_global_transform()
+            self.global_transform = self.parent.get_global_transform() * self.transform
         else:
-            self.parent_global_transform = glm.mat4()
-        self.global_transform = self.parent_global_transform * self.transform
+            self.global_transform = self.transform
 
         for child in self.children:
             child.update_global_transform()
@@ -231,12 +228,8 @@ def draw_frame(vao, MVP, MVP_loc):
     glDrawArrays(GL_LINES, 0, 6)
 
 def draw_node(vao, node, VP, MVP_loc, color_loc):
-
     MVP = VP * node.get_global_transform() * glm.scale(node.get_scale())
     color = node.get_color()
-
-    # MVP = glm.mat4()
-    # color = glm.vec3(1,0,0)
 
     glBindVertexArray(vao)
     glUniformMatrix4fv(MVP_loc, 1, GL_FALSE, glm.value_ptr(MVP))
