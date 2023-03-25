@@ -104,7 +104,7 @@ def prepare_vao_cube():
     # prepare vertex data (in main memory)
     # 36 vertices for 12 triangles
     vertices = glm.array(glm.float32,
-        # position            color
+        # position      color
         -1 ,  1 ,  1 ,  1, 1, 1, # v0
          1 , -1 ,  1 ,  1, 1, 1, # v2
          1 ,  1 ,  1 ,  1, 1, 1, # v1
