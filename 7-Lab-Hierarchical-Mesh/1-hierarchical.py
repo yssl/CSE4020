@@ -82,14 +82,14 @@ class Node:
     def set_transform(self, transform):
         self.transform = transform
 
-    def update_global_transform(self):
+    def update_tree_global_transform(self):
         if self.parent is not None:
             self.global_transform = self.parent.get_global_transform() * self.transform
         else:
             self.global_transform = self.transform
 
         for child in self.children:
-            child.update_global_transform()
+            child.update_tree_global_transform()
 
     def get_global_transform(self):
         return self.global_transform
@@ -247,7 +247,7 @@ def main():
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE) # for macOS
 
     # create a window and OpenGL context
-    window = glfwCreateWindow(800, 800, '1-ortho', None, None)
+    window = glfwCreateWindow(800, 800, '1-hierarchical', None, None)
     if not window:
         glfwTerminate()
         return
@@ -297,7 +297,7 @@ def main():
         arm.set_transform(glm.rotate(t, glm.vec3(0,0,1)) * glm.translate(glm.vec3(.5, 0, .01)))
 
         # recursively update global transformations of all nodes
-        base.update_global_transform()
+        base.update_tree_global_transform()
 
         # draw nodes
         glUseProgram(shader_for_box)
