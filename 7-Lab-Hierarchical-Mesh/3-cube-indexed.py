@@ -102,7 +102,7 @@ def key_callback(window, key, scancode, action, mods):
 
 def prepare_vao_cube():
     # prepare vertex data (in main memory)
-    # 36 vertices for 12 triangles
+    # 8 vertices
     vertices = glm.array(glm.float32,
         # position      color
         -1 ,  1 ,  1 ,  1, 1, 1, # v0
@@ -116,6 +116,7 @@ def prepare_vao_cube():
     )
 
     # prepare index data
+    # 12 triangles
     indices = glm.array(glm.uint32,
         0,2,1,
         0,3,2,
@@ -140,14 +141,14 @@ def prepare_vao_cube():
     glBindBuffer(GL_ARRAY_BUFFER, VBO)  # activate VBO as a vertex buffer object
 
     # create and activate EBO (element buffer object)
-    EBO = glGenBuffers(1)   # create a buffer object ID and store it to VBO variable
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO)  # activate VBO as a vertex buffer object
+    EBO = glGenBuffers(1)   # create a buffer object ID and store it to EBO variable
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO)  # activate EBO as an element buffer object
 
     # copy vertex data to VBO
     glBufferData(GL_ARRAY_BUFFER, vertices.nbytes, vertices.ptr, GL_STATIC_DRAW) # allocate GPU memory for and copy vertex data to the currently bound vertex buffer
 
     # copy index data to EBO
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.nbytes, indices.ptr, GL_STATIC_DRAW) # allocate GPU memory for and copy index data to the currently bound index buffer
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.nbytes, indices.ptr, GL_STATIC_DRAW) # allocate GPU memory for and copy index data to the currently bound element buffer
 
     # configure vertex positions
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * glm.sizeof(glm.float32), None)
