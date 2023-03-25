@@ -192,13 +192,13 @@ def prepare_vao_box():
 def prepare_vao_frame():
     # prepare vertex data (in main memory)
     vertices = glm.array(glm.float32,
-        # position        # color
-         0.0, 0.0, 0.0,  1.0, 0.0, 0.0, # x-axis start
-         1.0, 0.0, 0.0,  1.0, 0.0, 0.0, # x-axis end 
-         0.0, 0.0, 0.0,  0.0, 1.0, 0.0, # y-axis start
-         0.0, 1.0, 0.0,  0.0, 1.0, 0.0, # y-axis end 
-         0.0, 0.0, 0.0,  0.0, 0.0, 1.0, # z-axis start
-         0.0, 0.0, 1.0,  0.0, 0.0, 1.0, # z-axis end 
+        # position # color
+         0, 0, 0,  1, 0, 0, # x-axis start
+         1, 0, 0,  1, 0, 0, # x-axis end 
+         0, 0, 0,  0, 1, 0, # y-axis start
+         0, 1, 0,  0, 1, 0, # y-axis end 
+         0, 0, 0,  0, 0, 1, # z-axis start
+         0, 0, 1,  0, 0, 1, # z-axis end 
     )
 
     # create and activate VAO (vertex array object)
