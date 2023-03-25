@@ -163,13 +163,13 @@ def prepare_vao_box():
     # 6 vertices for 2 triangles
     vertices = glm.array(glm.float32,
         # position         
-        -0.5 ,  0.5 ,  0.5 , # v0
-         0.5 , -0.5 ,  0.5 , # v2
-         0.5 ,  0.5 ,  0.5 , # v1
-                    
-        -0.5 ,  0.5 ,  0.5 , # v0
-        -0.5 , -0.5 ,  0.5 , # v3
-         0.5 , -0.5 ,  0.5 , # v2
+        -1 ,  1 ,  0 , # v0
+         1 , -1 ,  0 , # v2
+         1 ,  1 ,  0 , # v1
+
+        -1 ,  1 ,  0 , # v0
+        -1 , -1 ,  0 , # v3
+         1 , -1 ,  0 , # v2
     )
 
     # create and activate VAO (vertex array object)
@@ -270,8 +270,8 @@ def main():
     vao_frame = prepare_vao_frame()
 
     # create a hirarchical model 
-    base = Node(None, glm.vec3(.4,.4,0.), glm.vec3(0,0,1))
-    arm = Node(base, glm.vec3(1.,.2,0.), glm.vec3(1,0,0))
+    base = Node(None, glm.vec3(.2,.2,0.), glm.vec3(0,0,1))
+    arm = Node(base, glm.vec3(.5,.1,0.), glm.vec3(1,0,0))
 
     # loop until the user closes the window
     while not glfwWindowShouldClose(window):
