@@ -182,7 +182,7 @@ def main():
                      # 2., 1.)
 
         # # rotation
-        # th = np.radians(30)
+        # th = glm.radians(30)
         # M = glm.mat2(np.cos(th), np.sin(th),
                     # -np.sin(th), np.cos(th))
 
