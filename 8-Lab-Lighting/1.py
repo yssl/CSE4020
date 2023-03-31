@@ -16,20 +16,46 @@ layout (location = 1) in vec3 vin_normal;
 out vec4 vout_color;
 
 uniform mat4 MVP;
+uniform mat4 M;
+uniform vec3 view_position;
 
 void main()
 {
     vec4 p3D_in_hcoord = vec4(vin_pos.xyz, 1.0);
     gl_Position = MVP * p3D_in_hcoord;
 
-    vec3 object_color = vec3(1,0,0);
+    vec3 light_position = vec3(2,3,4);
     vec3 light_color = vec3(1,1,1);
+    vec3 material_color = vec3(1,0,0);
+    float material_shininess = 32.0;
 
-    float ambient_strength = 0.1;
+    vec3 light_ambient = 0.1*light_color;
+    vec3 light_diffuse = light_color;
+    vec3 light_specular = light_color;
 
-    vec3 ambient_light = ambient_strength * light_color;
+    vec3 material_ambient = material_color;
+    vec3 material_diffuse = material_color;
+    vec3 material_specular = light_color;  // or can be material_color
 
-    vec3 color = ambient_light * object_color;
+    // ambient
+    vec3 ambient = light_ambient * material_ambient;
+
+    // for diffiuse and specular
+    vec3 normal = normalize( mat3(transpose(inverse(M))) * vin_normal);
+    vec3 vert_pos_in_world = vec3(M * vec4(vin_pos, 1));
+    vec3 light_dir = normalize(light_position - vert_pos_in_world);
+
+    // diffuse
+    float diff = max(dot(normal, light_dir), 0);
+    vec3 diffuse = diff * light_diffuse * material_diffuse;
+
+    // specular
+    vec3 view_dir = normalize(view_position - vert_pos_in_world);
+    vec3 reflect_dir = reflect(-light_dir, normal);
+    float spec = pow( max(dot(view_dir, reflect_dir), 0.0), material_shininess);
+    vec3 specular = spec * light_specular * material_specular;
+
+    vec3 color = ambient + diffuse + specular;
     vout_color = vec4(color, 1.);
 }
 '''
@@ -214,15 +240,6 @@ def prepare_vao_frame():
 
     return VAO
 
-def draw_frame(vao, MVP, MVP_loc):
-    glBindVertexArray(vao)
-    glUniformMatrix4fv(MVP_loc, 1, GL_FALSE, glm.value_ptr(MVP))
-    glDrawArrays(GL_LINES, 0, 6)
-
-def draw_cube(vao, MVP, MVP_loc):
-    glBindVertexArray(vao)
-    glUniformMatrix4fv(MVP_loc, 1, GL_FALSE, glm.value_ptr(MVP))
-    glDrawArrays(GL_TRIANGLES, 0, 36)
 
 def main():
     # initialize glfw
@@ -248,6 +265,8 @@ def main():
 
     # get uniform locations
     MVP_loc = glGetUniformLocation(shader_program, 'MVP')
+    M_loc = glGetUniformLocation(shader_program, 'M')
+    light_position_loc = glGetUniformLocation(shader_program, 'light_position')
     
     # prepare vaos
     vao_cube = prepare_vao_cube()
@@ -266,10 +285,8 @@ def main():
 
 
         # view matrix
-        V = glm.lookAt(glm.vec3(5*np.sin(g_cam_ang),g_cam_height,5*np.cos(g_cam_ang)), glm.vec3(0,0,0), glm.vec3(0,1,0))
-
-        # draw world frame
-        draw_frame(vao_frame, P*V*glm.mat4(), MVP_loc)
+        light_position = glm.vec3(5*np.sin(g_cam_ang),g_cam_height,5*np.cos(g_cam_ang))
+        V = glm.lookAt(light_position, glm.vec3(0,0,0), glm.vec3(0,1,0))
 
 
         # animating
@@ -277,15 +294,22 @@ def main():
 
         # rotation
         th = np.radians(t*90)
-        R = glm.rotate(th, glm.vec3(1,0,0))
+        R = glm.rotate(th, glm.vec3(0,1,0))
 
-        M = glm.mat4()
+        # M = glm.mat4()
 
         # # try applying rotation
-        # M = R
+        M = R
+
+        # update uniforms
+        MVP = P*V*M
+        glUniformMatrix4fv(MVP_loc, 1, GL_FALSE, glm.value_ptr(MVP))
+        glUniformMatrix4fv(M_loc, 1, GL_FALSE, glm.value_ptr(M))
+        glUniformMatrix4fv(light_position_loc, 1, GL_FALSE, glm.value_ptr(light_position))
 
         # draw cube w.r.t. the current frame MVP
-        draw_cube(vao_cube, P*V*M, MVP_loc)
+        glBindVertexArray(vao_cube)
+        glDrawArrays(GL_TRIANGLES, 0, 36)
 
         # swap front and back buffers
         glfwSwapBuffers(window)
