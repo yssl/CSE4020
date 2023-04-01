@@ -303,10 +303,10 @@ def main():
         th = np.radians(t*90)
         R = glm.rotate(th, glm.vec3(0,1,0))
 
-        # M = glm.mat4()
+        M = glm.mat4()
 
         # # try applying rotation
-        M = R
+        # M = R
 
         # update uniforms
         MVP = P*V*M
