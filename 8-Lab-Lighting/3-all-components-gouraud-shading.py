@@ -25,7 +25,7 @@ void main()
     gl_Position = MVP * p3D_in_hcoord;
 
     // light and material properties
-    vec3 light_position = vec3(2,0,0);
+    vec3 light_position = vec3(2,1,0);
     vec3 light_color = vec3(1,1,1);
     vec3 material_color = vec3(1,0,0);
     float material_shininess = 32.0;
