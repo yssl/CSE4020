@@ -233,7 +233,7 @@ def draw_node(vao, node, VP, MVP_loc, color_loc):
 
     glBindVertexArray(vao)
     glUniformMatrix4fv(MVP_loc, 1, GL_FALSE, glm.value_ptr(MVP))
-    glUniform3fv(color_loc, 1, glm.value_ptr(color))
+    glUniform3f(color_loc, color.r, color.g, color.b)
     glDrawArrays(GL_TRIANGLES, 0, 6)
 
 
