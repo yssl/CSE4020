@@ -213,7 +213,6 @@ def main():
     # get uniform locations
     MVP_loc = glGetUniformLocation(shader_program, 'MVP')
     M_loc = glGetUniformLocation(shader_program, 'M')
-    light_position_loc = glGetUniformLocation(shader_program, 'light_position')
     
     # prepare vaos
     vao_cube = prepare_vao_cube()
@@ -231,8 +230,8 @@ def main():
 
 
         # view matrix
-        light_position = glm.vec3(5*np.sin(g_cam_ang),g_cam_height,5*np.cos(g_cam_ang))
-        V = glm.lookAt(light_position, glm.vec3(0,0,0), glm.vec3(0,1,0))
+        view_position = glm.vec3(5*np.sin(g_cam_ang),g_cam_height,5*np.cos(g_cam_ang))
+        V = glm.lookAt(view_position, glm.vec3(0,0,0), glm.vec3(0,1,0))
 
 
         # animating
@@ -242,16 +241,15 @@ def main():
         th = np.radians(t*90)
         R = glm.rotate(th, glm.vec3(0,1,0))
 
-        # M = glm.mat4()
+        M = glm.mat4()
 
         # # try applying rotation
-        M = R
+        # M = R
 
         # update uniforms
         MVP = P*V*M
         glUniformMatrix4fv(MVP_loc, 1, GL_FALSE, glm.value_ptr(MVP))
         glUniformMatrix4fv(M_loc, 1, GL_FALSE, glm.value_ptr(M))
-        glUniformMatrix4fv(light_position_loc, 1, GL_FALSE, glm.value_ptr(light_position))
 
         # draw cube w.r.t. the current frame MVP
         glBindVertexArray(vao_cube)

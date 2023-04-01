@@ -42,7 +42,7 @@ uniform vec3 view_position;
 void main()
 {
     // light and material properties
-    vec3 light_position = vec3(2,1,0);
+    vec3 light_position = vec3(3,2,4);
     vec3 light_color = vec3(1,1,1);
     vec3 material_color = vec3(1,0,0);
     float material_shininess = 32.0;
