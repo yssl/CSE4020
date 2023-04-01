@@ -16,46 +16,26 @@ layout (location = 1) in vec3 vin_normal;
 out vec4 vout_color;
 
 uniform mat4 MVP;
-uniform mat4 M;
-uniform vec3 view_position;
 
 void main()
 {
     vec4 p3D_in_hcoord = vec4(vin_pos.xyz, 1.0);
     gl_Position = MVP * p3D_in_hcoord;
 
-    vec3 light_position = vec3(2,3,4);
+    // light and material properties
     vec3 light_color = vec3(1,1,1);
     vec3 material_color = vec3(1,0,0);
-    float material_shininess = 32.0;
 
+    // light components
     vec3 light_ambient = 0.1*light_color;
-    vec3 light_diffuse = light_color;
-    vec3 light_specular = light_color;
 
+    // material components
     vec3 material_ambient = material_color;
-    vec3 material_diffuse = material_color;
-    vec3 material_specular = light_color;  // or can be material_color
 
     // ambient
     vec3 ambient = light_ambient * material_ambient;
 
-    // for diffiuse and specular
-    vec3 normal = normalize( mat3(transpose(inverse(M))) * vin_normal);
-    vec3 vert_pos_in_world = vec3(M * vec4(vin_pos, 1));
-    vec3 light_dir = normalize(light_position - vert_pos_in_world);
-
-    // diffuse
-    float diff = max(dot(normal, light_dir), 0);
-    vec3 diffuse = diff * light_diffuse * material_diffuse;
-
-    // specular
-    vec3 view_dir = normalize(view_position - vert_pos_in_world);
-    vec3 reflect_dir = reflect(-light_dir, normal);
-    float spec = pow( max(dot(view_dir, reflect_dir), 0.0), material_shininess);
-    vec3 specular = spec * light_specular * material_specular;
-
-    vec3 color = ambient + diffuse + specular;
+    vec3 color = ambient;
     vout_color = vec4(color, 1.);
 }
 '''
