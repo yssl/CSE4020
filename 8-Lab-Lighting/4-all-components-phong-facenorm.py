@@ -77,7 +77,6 @@ void main()
 
     vec3 color = ambient + diffuse + specular;
     FragColor = vec4(color, 1.);
-    //FragColor = vec4(normalize(view_dir), 1.);
 }
 '''
 
