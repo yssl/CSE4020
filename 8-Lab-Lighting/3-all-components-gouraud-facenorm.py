@@ -60,7 +60,6 @@ void main()
 
     vec3 color = ambient + diffuse + specular;
     vout_color = vec4(color, 1.);
-    //vout_color = vec4(normalize(view_dir), 1.);
 }
 '''
 
