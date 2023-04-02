@@ -230,8 +230,8 @@ def main():
 
 
         # view matrix
-        view_position = glm.vec3(5*np.sin(g_cam_ang),g_cam_height,5*np.cos(g_cam_ang))
-        V = glm.lookAt(view_position, glm.vec3(0,0,0), glm.vec3(0,1,0))
+        view_pos = glm.vec3(5*np.sin(g_cam_ang),g_cam_height,5*np.cos(g_cam_ang))
+        V = glm.lookAt(view_pos, glm.vec3(0,0,0), glm.vec3(0,1,0))
 
 
         # animating

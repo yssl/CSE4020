@@ -17,7 +17,6 @@ out vec4 vout_color;
 
 uniform mat4 MVP;
 uniform mat4 M;
-uniform vec3 view_position;
 
 void main()
 {
@@ -25,7 +24,7 @@ void main()
     gl_Position = MVP * p3D_in_hcoord;
 
     // light and material properties
-    vec3 light_position = vec3(3,2,4);
+    vec3 light_pos = vec3(3,2,4);
     vec3 light_color = vec3(1,1,1);
     vec3 material_color = vec3(1,0,0);
 
@@ -42,8 +41,8 @@ void main()
 
     // diffuse
     vec3 normal = normalize( mat3(transpose(inverse(M))) * vin_normal);
-    vec3 vert_pos_in_world = vec3(M * vec4(vin_pos, 1));
-    vec3 light_dir = normalize(light_position - vert_pos_in_world);
+    vec3 surface_pos = vec3(M * vec4(vin_pos, 1));
+    vec3 light_dir = normalize(light_pos - surface_pos);
     float diff = max(dot(normal, light_dir), 0);
     vec3 diffuse = diff * light_diffuse * material_diffuse;
 
@@ -242,8 +241,8 @@ def main():
 
 
         # view matrix
-        view_position = glm.vec3(5*np.sin(g_cam_ang),g_cam_height,5*np.cos(g_cam_ang))
-        V = glm.lookAt(view_position, glm.vec3(0,0,0), glm.vec3(0,1,0))
+        view_pos = glm.vec3(5*np.sin(g_cam_ang),g_cam_height,5*np.cos(g_cam_ang))
+        V = glm.lookAt(view_pos, glm.vec3(0,0,0), glm.vec3(0,1,0))
 
 
         # animating

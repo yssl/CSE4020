@@ -13,7 +13,7 @@ g_vertex_shader_src = '''
 layout (location = 0) in vec3 vin_pos; 
 layout (location = 1) in vec3 vin_normal; 
 
-out vec3 vout_surface_pos_in_world;
+out vec3 vout_surface_pos;
 out vec3 vout_normal;
 
 uniform mat4 MVP;
@@ -24,7 +24,7 @@ void main()
     vec4 p3D_in_hcoord = vec4(vin_pos.xyz, 1.0);
     gl_Position = MVP * p3D_in_hcoord;
 
-    vout_surface_pos_in_world = vec3(M * vec4(vin_pos, 1));
+    vout_surface_pos = vec3(M * vec4(vin_pos, 1));
     vout_normal = normalize( mat3(transpose(inverse(M))) * vin_normal);
 }
 '''
@@ -32,17 +32,17 @@ void main()
 g_fragment_shader_src = '''
 #version 330 core
 
-in vec3 vout_surface_pos_in_world;
+in vec3 vout_surface_pos;
 in vec3 vout_normal;
 
 out vec4 FragColor;
 
-uniform vec3 view_position;
+uniform vec3 view_pos;
 
 void main()
 {
     // light and material properties
-    vec3 light_position = vec3(3,2,4);
+    vec3 light_pos = vec3(3,2,4);
     vec3 light_color = vec3(1,1,1);
     vec3 material_color = vec3(1,0,0);
     float material_shininess = 32.0;
@@ -62,15 +62,15 @@ void main()
 
     // for diffiuse and specular
     vec3 normal = normalize(vout_normal);
-    vec3 vert_pos_in_world = vout_surface_pos_in_world;
-    vec3 light_dir = normalize(light_position - vert_pos_in_world);
+    vec3 surface_pos = vout_surface_pos;
+    vec3 light_dir = normalize(light_pos - surface_pos);
 
     // diffuse
     float diff = max(dot(normal, light_dir), 0);
     vec3 diffuse = diff * light_diffuse * material_diffuse;
 
     // specular
-    vec3 view_dir = normalize(view_position - vert_pos_in_world);
+    vec3 view_dir = normalize(view_pos - surface_pos);
     vec3 reflect_dir = reflect(-light_dir, normal);
     float spec = pow( max(dot(view_dir, reflect_dir), 0.0), material_shininess);
     vec3 specular = spec * light_specular * material_specular;
@@ -240,7 +240,7 @@ def main():
     # get uniform locations
     MVP_loc = glGetUniformLocation(shader_program, 'MVP')
     M_loc = glGetUniformLocation(shader_program, 'M')
-    view_position_loc = glGetUniformLocation(shader_program, 'view_position')
+    view_pos_loc = glGetUniformLocation(shader_program, 'view_pos')
 
     # prepare vaos
     vao_cube = prepare_vao_cube()
@@ -255,8 +255,8 @@ def main():
         P = glm.perspective(45, 1, 1, 20)
 
         # view matrix
-        view_position = glm.vec3(5*np.sin(g_cam_ang),g_cam_height,5*np.cos(g_cam_ang))
-        V = glm.lookAt(view_position, glm.vec3(0,0,0), glm.vec3(0,1,0))
+        view_pos = glm.vec3(5*np.sin(g_cam_ang),g_cam_height,5*np.cos(g_cam_ang))
+        V = glm.lookAt(view_pos, glm.vec3(0,0,0), glm.vec3(0,1,0))
 
 
         # animating
@@ -276,7 +276,7 @@ def main():
         glUseProgram(shader_program)
         glUniformMatrix4fv(MVP_loc, 1, GL_FALSE, glm.value_ptr(MVP))
         glUniformMatrix4fv(M_loc, 1, GL_FALSE, glm.value_ptr(M))
-        glUniform3f(view_position_loc, view_position.x, view_position.y, view_position.z)
+        glUniform3f(view_pos_loc, view_pos.x, view_pos.y, view_pos.z)
 
         # draw cube w.r.t. the current frame MVP
         glBindVertexArray(vao_cube)
