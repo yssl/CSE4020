@@ -7,7 +7,7 @@ import numpy as np
 g_cam_ang = 0.
 g_cam_height = .1
 
-g_vertex_shader_src = '''
+g_vertex_shader_src_lighting = '''
 #version 330 core
 
 layout (location = 0) in vec3 vin_pos; 
@@ -29,7 +29,7 @@ void main()
 }
 '''
 
-g_fragment_shader_src = '''
+g_fragment_shader_src_lighting = '''
 #version 330 core
 
 in vec3 vout_surface_pos;
@@ -79,6 +79,41 @@ void main()
     FragColor = vec4(color, 1.);
 }
 '''
+
+g_vertex_shader_src_color = '''
+#version 330 core
+
+layout (location = 0) in vec3 vin_pos; 
+layout (location = 1) in vec3 vin_color; 
+
+out vec4 vout_color;
+
+uniform mat4 MVP;
+
+void main()
+{
+    // 3D points in homogeneous coordinates
+    vec4 p3D_in_hcoord = vec4(vin_pos.xyz, 1.0);
+
+    gl_Position = MVP * p3D_in_hcoord;
+
+    vout_color = vec4(vin_color, 1.);
+}
+'''
+
+g_fragment_shader_src_color = '''
+#version 330 core
+
+in vec4 vout_color;
+
+out vec4 FragColor;
+
+void main()
+{
+    FragColor = vout_color;
+}
+'''
+
 
 def load_shaders(vertex_shader_source, fragment_shader_source):
     # build and compile our shader program
@@ -214,14 +249,49 @@ def prepare_vao_cube():
 
     return VAO
 
-def draw_frame(vao, MVP, MVP_loc):
+def prepare_vao_frame():
+    # prepare vertex data (in main memory)
+    vertices = glm.array(glm.float32,
+        # position # color
+         0, 0, 0,  1, 0, 0, # x-axis start
+         1, 0, 0,  1, 0, 0, # x-axis end 
+         0, 0, 0,  0, 1, 0, # y-axis start
+         0, 1, 0,  0, 1, 0, # y-axis end 
+         0, 0, 0,  0, 0, 1, # z-axis start
+         0, 0, 1,  0, 0, 1, # z-axis end 
+    )
+
+    # create and activate VAO (vertex array object)
+    VAO = glGenVertexArrays(1)  # create a vertex array object ID and store it to VAO variable
+    glBindVertexArray(VAO)      # activate VAO
+
+    # create and activate VBO (vertex buffer object)
+    VBO = glGenBuffers(1)   # create a buffer object ID and store it to VBO variable
+    glBindBuffer(GL_ARRAY_BUFFER, VBO)  # activate VBO as a vertex buffer object
+
+    # copy vertex data to VBO
+    glBufferData(GL_ARRAY_BUFFER, vertices.nbytes, vertices.ptr, GL_STATIC_DRAW) # allocate GPU memory for and copy vertex data to the currently bound vertex buffer
+
+    # configure vertex positions
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * glm.sizeof(glm.float32), None)
+    glEnableVertexAttribArray(0)
+
+    # configure vertex colors
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * glm.sizeof(glm.float32), ctypes.c_void_p(3*glm.sizeof(glm.float32)))
+    glEnableVertexAttribArray(1)
+
+    return VAO
+
+def draw_frame(vao, MVP, unif_locs):
+    glUniformMatrix4fv(unif_locs['MVP'], 1, GL_FALSE, glm.value_ptr(MVP))
     glBindVertexArray(vao)
-    glUniformMatrix4fv(MVP_loc, 1, GL_FALSE, glm.value_ptr(MVP))
     glDrawArrays(GL_LINES, 0, 6)
 
-def draw_cube(vao, MVP, MVP_loc, M, M_loc, material_color, material_color_loc):
+def draw_cube(vao, MVP, M, matcolor, unif_locs):
+    glUniformMatrix4fv(unif_locs['MVP'], 1, GL_FALSE, glm.value_ptr(MVP))
+    glUniformMatrix4fv(unif_locs['M'], 1, GL_FALSE, glm.value_ptr(M))
+    glUniform3f(unif_locs['material_color'], matcolor.r, matcolor.g, matcolor.b)
     glBindVertexArray(vao)
-    glUniformMatrix4fv(MVP_loc, 1, GL_FALSE, glm.value_ptr(MVP))
     glDrawArrays(GL_TRIANGLES, 0, 36)
 
 def main():
@@ -243,17 +313,22 @@ def main():
     # register event callbacks
     glfwSetKeyCallback(window, key_callback);
 
-    # load shaders
-    shader_program = load_shaders(g_vertex_shader_src, g_fragment_shader_src)
+    # load shaders & get uniform locations
+    shader_lighting = load_shaders(g_vertex_shader_src_lighting, g_fragment_shader_src_lighting)
+    unif_names = ['MVP', 'M', 'view_pos', 'material_color']
+    unif_locs_lighting = {}
+    for name in unif_names:
+        unif_locs_lighting[name] = glGetUniformLocation(shader_lighting, name)
 
-    # get uniform locations
-    MVP_loc = glGetUniformLocation(shader_program, 'MVP')
-    M_loc = glGetUniformLocation(shader_program, 'M')
-    view_pos_loc = glGetUniformLocation(shader_program, 'view_pos')
-    material_color_loc = glGetUniformLocation(shader_program, 'material_color')
+    shader_color = load_shaders(g_vertex_shader_src_color, g_fragment_shader_src_color)
+    unif_names = ['MVP']
+    unif_locs_color = {}
+    for name in unif_names:
+        unif_locs_color[name] = glGetUniformLocation(shader_color, name)
 
     # prepare vaos
     vao_cube = prepare_vao_cube()
+    vao_frame = prepare_vao_frame()
 
     # loop until the user closes the window
     while not glfwWindowShouldClose(window):
@@ -268,31 +343,38 @@ def main():
         view_pos = glm.vec3(5*np.sin(g_cam_ang),g_cam_height,5*np.cos(g_cam_ang))
         V = glm.lookAt(view_pos, glm.vec3(0,0,0), glm.vec3(0,1,0))
 
+        # draw world frame
+        glUseProgram(shader_color)
+        draw_frame(vao_frame, P*V, unif_locs_color)
 
-        # animating
+        # ZYX Euler angles
         t = glfwGetTime()
+        xang = t
+        yang = glm.radians(30)
+        zang = glm.radians(30)
+        Rx = glm.rotate(xang, (1,0,0))
+        Ry = glm.rotate(yang, (0,1,0))
+        Rz = glm.rotate(zang, (0,0,1))
+        M = glm.mat4(Rz * Ry * Rx)
 
-        # rotation
-        th = np.radians(t*90)
-        R = glm.rotate(th, glm.vec3(0,1,0))
+        # set view_pos uniform in shader_lighting
+        glUseProgram(shader_lighting)
+        glUniform3f(unif_locs_lighting['view_pos'], view_pos.x, view_pos.y, view_pos.z)
 
-        M = glm.mat4()
+        # draw cubes
+        M = M * glm.scale((.25, .25, .25))
 
-        # # try applying rotation
-        # M = R
+        Mo = M * glm.mat4()
+        draw_cube(vao_cube, P*V*Mo, Mo, glm.vec3(.5,.5,.5), unif_locs_lighting)
 
-        # update uniforms
-        MVP = P*V*M
-        glUseProgram(shader_program)
-        glUniform3f(view_pos_loc, view_pos.x, view_pos.y, view_pos.z)
+        Mx = M * glm.translate((2.5,0,0))
+        draw_cube(vao_cube, P*V*Mx, Mx, glm.vec3(1,0,0), unif_locs_lighting)
 
-        glUniformMatrix4fv(MVP_loc, 1, GL_FALSE, glm.value_ptr(MVP))
-        glUniformMatrix4fv(M_loc, 1, GL_FALSE, glm.value_ptr(M))
-        glUniform3f(material_color_loc, 1,0,0)
+        My = M * glm.translate((0,2.5,0))
+        draw_cube(vao_cube, P*V*My, My, glm.vec3(0,1,0), unif_locs_lighting)
 
-        # draw cube w.r.t. the current frame MVP
-        glBindVertexArray(vao_cube)
-        glDrawArrays(GL_TRIANGLES, 0, 36)
+        Mz = M * glm.translate((0,0,2.5))
+        draw_cube(vao_cube, P*V*Mz, Mz, glm.vec3(0,0,1), unif_locs_lighting)
 
         # swap front and back buffers
         glfwSwapBuffers(window)
