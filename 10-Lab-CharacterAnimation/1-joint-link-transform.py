@@ -64,7 +64,7 @@ void main()
 '''
 
 class Node:
-    def __init__(self, parent, shape_transform, color):
+    def __init__(self, parent, link_transform_from_parent, shape_transform, color):
         # hierarchy
         self.parent = parent
         self.children = []
@@ -72,21 +72,22 @@ class Node:
             parent.children.append(self)
 
         # transform
-        self.transform = glm.mat4()
+        self.link_transform_from_parent = link_transform_from_parent
+        self.joint_transform = glm.mat4()
         self.global_transform = glm.mat4()
 
         # shape
         self.shape_transform = shape_transform
         self.color = color
 
-    def set_transform(self, transform):
-        self.transform = transform
+    def set_joint_transform(self, joint_transform):
+        self.joint_transform = joint_transform
 
     def update_tree_global_transform(self):
         if self.parent is not None:
-            self.global_transform = self.parent.get_global_transform() * self.transform
+            self.global_transform = self.parent.get_global_transform() * self.link_transform_from_parent * self.joint_transform
         else:
-            self.global_transform = self.transform
+            self.global_transform = self.link_transform_from_parent * self.joint_transform
 
         for child in self.children:
             child.update_tree_global_transform()
@@ -269,9 +270,9 @@ def main():
     vao_box = prepare_vao_box()
     vao_frame = prepare_vao_frame()
 
-    # create a hirarchical model - Node(parent, shape_transform, color)
-    base = Node(None, glm.scale((.2,.2,0.)), glm.vec3(0,0,1))
-    arm = Node(base, glm.translate((.5,0,.01)) * glm.scale((.5,.1,0.)), glm.vec3(1,0,0))
+    # create a hirarchical model - Node(parent, link_transform_from_parent, shape_transform, color)
+    base = Node(None, glm.mat4(), glm.scale((.2,.2,0.)), glm.vec3(0,0,1))
+    arm = Node(base, glm.translate(glm.vec3(.2,0,0)), glm.translate((.5,0,.01)) * glm.scale((.5,.1,0.)), glm.vec3(1,0,0))
 
     # loop until the user closes the window
     while not glfwWindowShouldClose(window):
@@ -293,8 +294,8 @@ def main():
         t = glfwGetTime()
 
         # set local transformations of each node
-        base.set_transform(glm.translate((glm.sin(t),0,0)))
-        arm.set_transform(glm.translate((.2, 0, 0)) * glm.rotate(t, (0,0,1)))
+        base.set_joint_transform(glm.translate((glm.sin(t),0,0)))
+        arm.set_joint_transform(glm.rotate(t, (0,0,1)))
 
         # recursively update global transformations of all nodes
         base.update_tree_global_transform()
