@@ -64,7 +64,7 @@ void main()
 '''
 
 class Node:
-    def __init__(self, parent, scale, color):
+    def __init__(self, parent, shape_transform, color):
         # hierarchy
         self.parent = parent
         self.children = []
@@ -76,7 +76,7 @@ class Node:
         self.global_transform = glm.mat4()
 
         # shape
-        self.scale = scale
+        self.shape_transform = shape_transform
         self.color = color
 
     def set_transform(self, transform):
@@ -93,8 +93,8 @@ class Node:
 
     def get_global_transform(self):
         return self.global_transform
-    def get_scale(self):
-        return self.scale
+    def get_shape_transform(self):
+        return self.shape_transform
     def get_color(self):
         return self.color
 
@@ -228,7 +228,7 @@ def draw_frame(vao, MVP, MVP_loc):
     glDrawArrays(GL_LINES, 0, 6)
 
 def draw_node(vao, node, VP, MVP_loc, color_loc):
-    MVP = VP * node.get_global_transform() * glm.scale(node.get_scale())
+    MVP = VP * node.get_global_transform() * node.get_shape_transform()
     color = node.get_color()
 
     glBindVertexArray(vao)
@@ -270,8 +270,8 @@ def main():
     vao_frame = prepare_vao_frame()
 
     # create a hirarchical model 
-    base = Node(None, glm.vec3(.2,.2,0.), glm.vec3(0,0,1))
-    arm = Node(base, glm.vec3(.5,.1,0.), glm.vec3(1,0,0))
+    base = Node(None, glm.scale((.2,.2,0.)), glm.vec3(0,0,1))
+    arm = Node(base, glm.translate((.5,0,.01)) * glm.scale((.5,.1,0.)), glm.vec3(1,0,0))
 
     # loop until the user closes the window
     while not glfwWindowShouldClose(window):
@@ -293,8 +293,8 @@ def main():
         t = glfwGetTime()
 
         # set local transformations of each node
-        base.set_transform(glm.translate(glm.vec3(glm.sin(t),0,0)))
-        arm.set_transform(glm.rotate(t, glm.vec3(0,0,1)) * glm.translate(glm.vec3(.5, 0, .01)))
+        base.set_transform(glm.translate((glm.sin(t),0,0)))
+        arm.set_transform(glm.translate((.2, 0, 0)) * glm.rotate(t, (0,0,1)))
 
         # recursively update global transformations of all nodes
         base.update_tree_global_transform()
