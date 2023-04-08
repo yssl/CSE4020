@@ -120,19 +120,23 @@ def button_callback(window, button, action, mod):
 
 def cursor_callback(window, xpos, ypos):
     global g_control_points, g_moving_index
-    global g_vao_control_points, g_vao_curve_points
     global g_vbo_control_points, g_vbo_curve_points
 
     ypos = WINDOW_HEIGHT - ypos
 
     if g_moving_index is not None:
+
+        # update the moving control point position
         g_control_points[g_moving_index].x = xpos
         g_control_points[g_moving_index].y = ypos
         
-        copy_points_data(g_control_points, g_vao_control_points, g_vbo_control_points)
+        # copy updateded control point positions to g_vbo_control_points
+        copy_points_data(g_control_points, g_vbo_control_points)
 
+        # copy generated curve point positions from 
+        # updated control points to g_vbo_curve_points
         curve_points = generate_curve_points(g_control_points)
-        copy_points_data(curve_points, g_vao_curve_points, g_vbo_curve_points)
+        copy_points_data(curve_points, g_vbo_curve_points)
 
 def initialize_vao_for_points(points):
     # create and activate VAO (vertex array object)
@@ -143,7 +147,7 @@ def initialize_vao_for_points(points):
     VBO = glGenBuffers(1)   # create a buffer object ID and store it to VBO variable
     glBindBuffer(GL_ARRAY_BUFFER, VBO)  # activate VBO as a vertex buffer object
 
-    # only allocate VBO and not copy data by specifiying the third argument to None
+    # only allocate VBO and not copy data by specifying the third argument to None
     vertices = glm.array(points)
     glBufferData(GL_ARRAY_BUFFER, vertices.nbytes, None, GL_DYNAMIC_DRAW)
 
@@ -151,10 +155,10 @@ def initialize_vao_for_points(points):
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * glm.sizeof(glm.float32), None)
     glEnableVertexAttribArray(0)
 
+    # return VBO along with VAO as it is needed when copying updated point position to VBO
     return VAO, VBO
 
-def copy_points_data(points, vao, vbo):
-    glBindVertexArray(vao)      # activate VAO
+def copy_points_data(points, vbo):
     glBindBuffer(GL_ARRAY_BUFFER, vbo)  # activate VBO
 
     # prepare vertex data (in main memory)
@@ -169,12 +173,16 @@ def generate_curve_points(control_points):
 
     for t in np.linspace(0, 1, 100): # linspace(start, stop, num)
         T = np.array([t**3, t**2, t, 1])
+
+        # Bezier basis matrix
         M = np.array([[-1, 3, -3, 1],
                       [3, -6, 3, 0],
                       [-3, 3, 0, 0],
                       [1, 0, 0, 0]], float)
+
         P = np.array(control_points)
         p = T @ M @ P
+
         curve_points.append(glm.vec3(p))
 
     return curve_points
@@ -210,13 +218,14 @@ def main():
     for name in unif_names:
         unif_locs[name] = glGetUniformLocation(shader_program, name)
 
-    # prepare vaos
+    # prepare control points vao & vbo
     g_vao_control_points, g_vbo_control_points = initialize_vao_for_points(g_control_points)
-    copy_points_data(g_control_points, g_vao_control_points, g_vbo_control_points)
+    copy_points_data(g_control_points, g_vbo_control_points)
 
+    # prepare curve points vao & vbo
     curve_points = generate_curve_points(g_control_points)
     g_vao_curve_points, g_vbo_curve_points = initialize_vao_for_points(curve_points)
-    copy_points_data(curve_points, g_vao_curve_points, g_vbo_curve_points)
+    copy_points_data(curve_points, g_vbo_curve_points)
 
     # set point size (for drawing control points)
     glPointSize(20)
@@ -228,7 +237,8 @@ def main():
         glUseProgram(shader_program)
 
         # projection matrix & set MVP uniform
-        P = glm.ortho(0,800, 0,800, -1,1)
+        # to make our camera space to have the same size as glfw screen space
+        P = glm.ortho(0,800, 0,WINDOW_HEIGHT, -1,1)
         MVP = P
         glUniformMatrix4fv(unif_locs['MVP'], 1, GL_FALSE, glm.value_ptr(MVP))
 
