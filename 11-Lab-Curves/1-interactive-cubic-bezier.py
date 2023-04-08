@@ -174,7 +174,7 @@ def generate_curve_points(control_points):
     for t in np.linspace(0, 1, 100): # linspace(start, stop, num)
         T = np.array([t**3, t**2, t, 1])
 
-        # Bezier basis matrix
+        # cubic Bezier basis matrix
         M = np.array([[-1, 3, -3, 1],
                       [3, -6, 3, 0],
                       [-3, 3, 0, 0],
