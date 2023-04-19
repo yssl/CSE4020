@@ -25,7 +25,7 @@ void main()
     gl_Position = MVP * p3D_in_hcoord;
 
     vout_surface_pos = vec3(M * vec4(vin_pos, 1));
-    vout_normal = normalize( mat3(transpose(inverse(M))) * vin_normal);
+    vout_normal = normalize( mat3(inverse(transpose(M)) ) * vin_normal);
 }
 '''
 

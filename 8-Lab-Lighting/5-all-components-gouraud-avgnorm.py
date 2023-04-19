@@ -44,7 +44,7 @@ void main()
     vec3 ambient = light_ambient * material_ambient;
 
     // for diffiuse and specular
-    vec3 normal = normalize(mat3(transpose(inverse(M))) * vin_normal);
+    vec3 normal = normalize( mat3(inverse(transpose(M)) ) * vin_normal);
     vec3 surface_pos = vec3(M * vec4(vin_pos, 1));
     vec3 light_dir = normalize(light_pos - surface_pos);
 
