@@ -304,10 +304,14 @@ def ZYXEulerToRotMat(angles):
 def slerp(R1, R2, t):
     return R1 * exp( t * log(glm.transpose(R1) * R2) )
 
+eps = 1e-6
 def exp(rotvec):
     angle = glm.l2Norm(rotvec)
-    axis = glm.normalize(rotvec)
-    return glm.mat3(glm.rotate(angle, axis))
+    if angle > eps:
+        axis = glm.normalize(rotvec)
+        return glm.mat3(glm.rotate(angle, axis))
+    else:
+        return glm.mat3()
 
 def log(rotmat):
     quat = glm.quat(rotmat)
