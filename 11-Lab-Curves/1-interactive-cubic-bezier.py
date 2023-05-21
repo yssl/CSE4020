@@ -134,8 +134,8 @@ def cursor_callback(window, xpos, ypos):
         # copy updateded control point positions to g_vbo_control_points
         copy_points_data(g_control_points, g_vbo_control_points)
 
-        # copy generated curve point positions from 
-        # updated control points to g_vbo_curve_points
+        # generate curve points from updated control points
+        # and copy them to g_vbo_curve_points
         curve_points = generate_curve_points(g_control_points)
         copy_points_data(curve_points, g_vbo_curve_points)
 
