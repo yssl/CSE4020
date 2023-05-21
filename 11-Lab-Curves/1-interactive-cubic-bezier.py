@@ -223,8 +223,10 @@ def main():
     g_vao_control_points, g_vbo_control_points = initialize_vao_for_points(g_control_points)
     copy_points_data(g_control_points, g_vbo_control_points)
 
-    # prepare curve points vao & vbo
+    # generate initial curve points
     curve_points = generate_curve_points(g_control_points)
+
+    # prepare curve points vao & vbo
     g_vao_curve_points, g_vbo_curve_points = initialize_vao_for_points(curve_points)
     copy_points_data(curve_points, g_vbo_curve_points)
 
