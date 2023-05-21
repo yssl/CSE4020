@@ -3,6 +3,7 @@ from glfw.GLFW import *
 import glm
 import numpy as np
 
+WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 800
 
 g_control_points = [
@@ -165,7 +166,7 @@ def copy_points_data(points, vbo):
     vertices = glm.array(points)
 
     # only copy vertex data to VBO and not allocating it
-    # glBufferSubData(taraget, offset, size, data)
+    # glBufferSubData(target, offset, size, data)
     glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.nbytes, vertices.ptr)
 
 def generate_curve_points(control_points):
@@ -200,7 +201,7 @@ def main():
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE) # for macOS
 
     # create a window and OpenGL context
-    window = glfwCreateWindow(800, WINDOW_HEIGHT, '1-interactive-bezier', None, None)
+    window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, '1-interactive-bezier', None, None)
     if not window:
         glfwTerminate()
         return
@@ -238,7 +239,7 @@ def main():
 
         # projection matrix & set MVP uniform
         # to make our camera space to have the same size as glfw screen space
-        P = glm.ortho(0,800, 0,WINDOW_HEIGHT, -1,1)
+        P = glm.ortho(0,WINDOW_WIDTH, 0,WINDOW_HEIGHT, -1,1)
         MVP = P
         glUniformMatrix4fv(unif_locs['MVP'], 1, GL_FALSE, glm.value_ptr(MVP))
 
