@@ -172,7 +172,7 @@ def copy_points_data(points, vbo):
 def generate_curve_points(control_points):
     curve_points = []
 
-    for t in np.linspace(0, 1, 100): # linspace(start, stop, num)
+    for t in np.linspace(0, 1, 101): # linspace(start, stop, num)
         T = np.array([t**3, t**2, t, 1])
 
         # cubic Bezier basis matrix
