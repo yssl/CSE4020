@@ -33,7 +33,7 @@ g_fragment_shader_src = '''
 #version 330 core
 
 in vec3 vout_surface_pos;
-in vec3 vout_normal;
+in vec3 vout_normal;  // interpolated normal
 
 out vec4 FragColor;
 

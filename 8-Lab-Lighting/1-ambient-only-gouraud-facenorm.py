@@ -43,7 +43,7 @@ void main()
 g_fragment_shader_src = '''
 #version 330 core
 
-in vec4 vout_color;
+in vec4 vout_color;  // interpolated color
 
 out vec4 FragColor;
 
