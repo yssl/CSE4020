@@ -267,8 +267,8 @@ def main():
     # diffuse texture
 
     # create texture
-    texture1 = glGenTextures(1)
-    glBindTexture(GL_TEXTURE_2D, texture1)
+    texture_diffuse = glGenTextures(1)
+    glBindTexture(GL_TEXTURE_2D, texture_diffuse)
 
     # set texture filtering parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR)
@@ -292,13 +292,12 @@ def main():
     except:
         print("Failed to load texture")
 
-    glUniform1i(glGetUniformLocation(shader_program, 'texture_diffuse'), 0)
-
     ############################################
+    # specular texture
 
     # create texture
-    texture2 = glGenTextures(1)
-    glBindTexture(GL_TEXTURE_2D, texture2)
+    texture_specular = glGenTextures(1)
+    glBindTexture(GL_TEXTURE_2D, texture_specular)
 
     # set texture filtering parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR)
@@ -323,9 +322,20 @@ def main():
     except:
         print("Failed to load texture")
 
+    ############################################
+
+    # bind textures on corresponding "texture units" # to use multiple textures
+
+    # texture GL_TEXTURE0 -> corresponding sampler uniform variable value is 0
+    glActiveTexture(GL_TEXTURE0)
+    glBindTexture(GL_TEXTURE_2D, texture_diffuse)
+    glUniform1i(glGetUniformLocation(shader_program, 'texture_diffuse'), 0)
+
+    # texture GL_TEXTURE1 -> corresponding sampler uniform variable value is 1
+    glActiveTexture(GL_TEXTURE1)
+    glBindTexture(GL_TEXTURE_2D, texture_specular)
     glUniform1i(glGetUniformLocation(shader_program, 'texture_specular'), 1)
 
-    ############################################
 
     # loop until the user closes the window
     while not glfwWindowShouldClose(window):
@@ -358,12 +368,6 @@ def main():
         glUniformMatrix4fv(MVP_loc, 1, GL_FALSE, glm.value_ptr(MVP))
         glUniformMatrix4fv(M_loc, 1, GL_FALSE, glm.value_ptr(M))
         glUniform3f(view_pos_loc, view_pos.x, view_pos.y, view_pos.z)
-
-        # bind textures on corresponding texture units
-        glActiveTexture(GL_TEXTURE0)
-        glBindTexture(GL_TEXTURE_2D, texture1)
-        glActiveTexture(GL_TEXTURE1)
-        glBindTexture(GL_TEXTURE_2D, texture2)
 
         # draw cube w.r.t. the current frame MVP
         glBindVertexArray(vao_cube)
