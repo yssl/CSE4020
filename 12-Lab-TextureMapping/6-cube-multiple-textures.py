@@ -240,7 +240,7 @@ def main():
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE) # for macOS
 
     # create a window and OpenGL context
-    window = glfwCreateWindow(800, 800, '6-texture-cube-diffuse-specular', None, None)
+    window = glfwCreateWindow(800, 800, '6-cube-multiple-textures', None, None)
     if not window:
         glfwTerminate()
         return

@@ -40,16 +40,10 @@ in vec2 vout_uv;  // interpolated texture coordinates
 
 out vec4 FragColor;
 
-uniform sampler2D texture1;  // sampler2D: GLSL built-in datatype for 2D texture object
+uniform sampler2D texture1;
 
 void main()
 {
-    //FragColor = vout_color;
-
-    // vec4 texture(sampler, uv)
-    // : retrive the color of the specified texture at the specified texture coordinates
-    //   sampler: texture sampler2D
-    //   uv: texture coordinates
     FragColor = texture(texture1, vout_uv);
 }
 '''
@@ -158,7 +152,7 @@ def main():
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE) # for macOS
 
     # create a window and OpenGL context
-    window = glfwCreateWindow(800, 800, '1-texture-triangle', None, None)
+    window = glfwCreateWindow(800, 800, '4-triangle-texture-mipmaps', None, None)
     if not window:
         glfwTerminate()
         return
@@ -180,12 +174,24 @@ def main():
     # texture
 
     # create texture
-    texture1 = glGenTextures(1)             # create texture object
-    glBindTexture(GL_TEXTURE_2D, texture1)  # activate texture1 as GL_TEXTURE_2D
+    texture1 = glGenTextures(1)
+    glBindTexture(GL_TEXTURE_2D, texture1)
 
-    # set texture filtering parameters - skip at this moment
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    # set texture filtering parameters
+
+    # GL_TEXTURE_MIN_FILTER: used when the texture is displayed at a smaller size than its original resolution. 
+    # default: GL_NEAREST_MIPMAP_LINEAR
+    # GL_NEAREST
+    # GL_LINEAR
+    # GL_NEAREST_MIPMAP_NEAREST: takes the nearest mipmap to match the pixel size and uses nearest neighbor interpolation for texture sampling.
+    # GL_LINEAR_MIPMAP_NEAREST: takes the nearest mipmap level and samples that level using linear interpolation.
+    # GL_NEAREST_MIPMAP_LINEAR: linearly interpolates between the two mipmaps that most closely match the size of a pixel and samples the interpolated level via nearest neighbor interpolation.
+    # GL_LINEAR_MIPMAP_LINEAR: linearly interpolates between the two closest mipmaps and samples the interpolated level via linear interpolation.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR)
+
+    # GL_TEXTURE_MAG_FILTER: used when the texture is displayed at a larger size than its original resolution. 
+    # default: GL_LINEAR
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 
     try:
         img = Image.open('./320px-Solarsystemscope_texture_8k_earth_daymap.jpg')
@@ -194,9 +200,11 @@ def main():
         # because OpenGL expects 0.0 on y-axis to be on the bottom edge, but images usually have 0.0 at the top of the y-axis
         img = img.transpose(Image.FLIP_TOP_BOTTOM)
 
-        # specify a two-dimensional texture image
         # glTexImage2D(target, level, texture internalformat, width, height, border, image data format, image data type, data)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.width, img.height, 0, GL_RGB, GL_UNSIGNED_BYTE, img.tobytes())
+    
+        # generate mipmaps
+        glGenerateMipmap(GL_TEXTURE_2D)
 
         img.close()
 
@@ -204,11 +212,6 @@ def main():
         print("Failed to load texture")
 
     ############################################
-
-    # if your triangle shows up as completely black, uncomment the following lines.
-    # glActiveTexture(GL_TEXTURE0)
-    # glBindTexture(GL_TEXTURE_2D, texture1)
-
 
     # loop until the user closes the window
     while not glfwWindowShouldClose(window):
@@ -226,7 +229,9 @@ def main():
         V = glm.lookAt(glm.vec3(.1*np.sin(g_cam_ang),g_cam_height,.1*np.cos(g_cam_ang)), glm.vec3(0,0,0), glm.vec3(0,1,0))
 
         # modeling matrix
-        M = glm.mat4()
+        # M = glm.mat4()
+        # M = glm.scale(glm.vec3(5,5,5))
+        M = glm.scale(glm.vec3(.1,.1,.1))
 
         # current frame: P*V*M
         MVP = P*V*M

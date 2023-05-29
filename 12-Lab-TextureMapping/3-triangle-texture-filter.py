@@ -152,7 +152,7 @@ def main():
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE) # for macOS
 
     # create a window and OpenGL context
-    window = glfwCreateWindow(800, 800, '4-texture-triangle-mipmaps', None, None)
+    window = glfwCreateWindow(800, 800, '3-triangle-texture-filter', None, None)
     if not window:
         glfwTerminate()
         return
@@ -180,18 +180,14 @@ def main():
     # set texture filtering parameters
 
     # GL_TEXTURE_MIN_FILTER: used when the texture is displayed at a smaller size than its original resolution. 
-    # default: GL_NEAREST_MIPMAP_LINEAR
-    # GL_NEAREST
-    # GL_LINEAR
-    # GL_NEAREST_MIPMAP_NEAREST: takes the nearest mipmap to match the pixel size and uses nearest neighbor interpolation for texture sampling.
-    # GL_LINEAR_MIPMAP_NEAREST: takes the nearest mipmap level and samples that level using linear interpolation.
-    # GL_NEAREST_MIPMAP_LINEAR: linearly interpolates between the two mipmaps that most closely match the size of a pixel and samples the interpolated level via nearest neighbor interpolation.
-    # GL_LINEAR_MIPMAP_LINEAR: linearly interpolates between the two closest mipmaps and samples the interpolated level via linear interpolation.
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR)
+    # default: GL_NEAREST_MIPMAP_LINEAR (will be expained soon) 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
 
     # GL_TEXTURE_MAG_FILTER: used when the texture is displayed at a larger size than its original resolution. 
     # default: GL_LINEAR
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 
     try:
         img = Image.open('./320px-Solarsystemscope_texture_8k_earth_daymap.jpg')
@@ -202,9 +198,6 @@ def main():
 
         # glTexImage2D(target, level, texture internalformat, width, height, border, image data format, image data type, data)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.width, img.height, 0, GL_RGB, GL_UNSIGNED_BYTE, img.tobytes())
-    
-        # generate mipmaps
-        glGenerateMipmap(GL_TEXTURE_2D)
 
         img.close()
 
@@ -230,8 +223,8 @@ def main():
 
         # modeling matrix
         # M = glm.mat4()
-        # M = glm.scale(glm.vec3(5,5,5))
-        M = glm.scale(glm.vec3(.1,.1,.1))
+        M = glm.scale(glm.vec3(5,5,5))
+        # M = glm.scale(glm.vec3(.1,.1,.1))
 
         # current frame: P*V*M
         MVP = P*V*M

@@ -44,7 +44,7 @@ uniform sampler2D texture1;
 
 void main()
 {
-    FragColor = texture(texture1, vout_uv) * vout_color;
+    FragColor = texture(texture1, vout_uv);
 }
 '''
 
@@ -111,9 +111,9 @@ def prepare_vao_triangle():
     # prepare vertex data (in main memory)
     vertices = glm.array(glm.float32,
         # position      # color         # texture coordinates
-         0.0, 0.0, 0.0,  1.0, 0.0, 0.0,  0.0, 0.0,  # v0
-         0.5, 0.0, 0.0,  0.0, 1.0, 0.0,  1.0, 0.0,  # v1
-         0.0, 0.5, 0.0,  0.0, 0.0, 1.0,  0.0, 1.0,  # v2
+         0.0, 0.0, 0.0,  1.0, 0.0, 0.0,  -.5, -.5,  # v0
+         0.5, 0.0, 0.0,  0.0, 1.0, 0.0,  2.0, -.5,  # v1
+         0.0, 0.5, 0.0,  0.0, 0.0, 1.0,  -.5, 2.0,  # v2
     )
 
     # create and activate VAO (vertex array object)
@@ -152,7 +152,7 @@ def main():
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE) # for macOS
 
     # create a window and OpenGL context
-    window = glfwCreateWindow(800, 800, '2-texture-triangle-color', None, None)
+    window = glfwCreateWindow(800, 800, '5-triangle-texture-wrap', None, None)
     if not window:
         glfwTerminate()
         return
@@ -177,9 +177,24 @@ def main():
     texture1 = glGenTextures(1)
     glBindTexture(GL_TEXTURE_2D, texture1)
 
-    # set texture filtering parameters - skip at this moment
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    # set texture filtering parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+
+    # set the texture wrapping parameters
+    # default: GL_REPEAT
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER)
+    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT)
+    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRROR_CLAMP_TO_EDGE)
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER)
+    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT)
+    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRROR_CLAMP_TO_EDGE)
 
     try:
         img = Image.open('./320px-Solarsystemscope_texture_8k_earth_daymap.jpg')
@@ -190,6 +205,9 @@ def main():
 
         # glTexImage2D(target, level, texture internalformat, width, height, border, image data format, image data type, data)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.width, img.height, 0, GL_RGB, GL_UNSIGNED_BYTE, img.tobytes())
+    
+        # generate mipmaps
+        glGenerateMipmap(GL_TEXTURE_2D)
 
         img.close()
 
@@ -214,7 +232,8 @@ def main():
         V = glm.lookAt(glm.vec3(.1*np.sin(g_cam_ang),g_cam_height,.1*np.cos(g_cam_ang)), glm.vec3(0,0,0), glm.vec3(0,1,0))
 
         # modeling matrix
-        M = glm.mat4()
+        # M = glm.mat4()
+        M = glm.scale(glm.vec3(2,2,2))
 
         # current frame: P*V*M
         MVP = P*V*M
