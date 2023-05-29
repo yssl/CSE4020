@@ -55,7 +55,7 @@ void main()
     // material components
     vec3 material_ambient = material_color;
     vec3 material_diffuse = material_color;
-    vec3 material_specular = light_color;  // for non-metal material
+    vec3 material_specular = vec3(1,1,1);  // for non-metal material
 
     // ambient
     vec3 ambient = light_ambient * material_ambient;
