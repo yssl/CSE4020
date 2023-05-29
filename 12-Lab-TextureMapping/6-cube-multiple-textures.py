@@ -324,17 +324,17 @@ def main():
 
     ############################################
 
-    # bind textures on corresponding "texture units" # to use multiple textures
-
-    # texture GL_TEXTURE0 -> corresponding sampler uniform variable value is 0
-    glActiveTexture(GL_TEXTURE0)
-    glBindTexture(GL_TEXTURE_2D, texture_diffuse)
+    # texture unit GL_TEXTUREi corresponds to sampler uniform value i
     glUniform1i(glGetUniformLocation(shader_program, 'texture_diffuse'), 0)
 
-    # texture GL_TEXTURE1 -> corresponding sampler uniform variable value is 1
+    # texture objects are binded on corresponding texture units
+    glActiveTexture(GL_TEXTURE0)
+    glBindTexture(GL_TEXTURE_2D, texture_diffuse)
+
+
+    glUniform1i(glGetUniformLocation(shader_program, 'texture_specular'), 1)
     glActiveTexture(GL_TEXTURE1)
     glBindTexture(GL_TEXTURE_2D, texture_specular)
-    glUniform1i(glGetUniformLocation(shader_program, 'texture_specular'), 1)
 
 
     # loop until the user closes the window
