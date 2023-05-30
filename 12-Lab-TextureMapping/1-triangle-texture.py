@@ -194,7 +194,7 @@ def main():
         # because OpenGL expects 0.0 on y-axis to be on the bottom edge, but images usually have 0.0 at the top of the y-axis
         img = img.transpose(Image.FLIP_TOP_BOTTOM)
 
-        # specify a two-dimensional texture image
+        # specify a 2D texture image
         # glTexImage2D(target, level, texture internalformat, width, height, border, image data format, image data type, data)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.width, img.height, 0, GL_RGB, GL_UNSIGNED_BYTE, img.tobytes())
 
