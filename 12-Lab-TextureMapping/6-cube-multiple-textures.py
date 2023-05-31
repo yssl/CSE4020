@@ -324,11 +324,11 @@ def main():
 
     ############################################
 
-    # texture unit GL_TEXTUREi corresponds to sampler uniform value i
+    # for i-th texture unit, sampler uniform variable value should be i
     glUniform1i(glGetUniformLocation(shader_program, 'texture_diffuse'), 0)
-
-    # texture objects are binded on corresponding texture units
-    glActiveTexture(GL_TEXTURE0)
+    # activate i-th texture unit by passing GL_TEXTUREi
+    glActiveTexture(GL_TEXTURE0)  
+    # texture object is binded on this activated texture unit
     glBindTexture(GL_TEXTURE_2D, texture_diffuse)
 
 
