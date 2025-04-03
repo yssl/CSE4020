@@ -202,7 +202,7 @@ def main():
         th = np.radians(t*90)
         R = np.array([[np.cos(th), -np.sin(th), 0., 0.],
                       [np.sin(th),  np.cos(th), 0., 0.],
-                      [0.,         0.,          0., 1.],
+                      [0.,         0.,          1., 0.],
                       [0.,         0.,          0., 1.]])
 
         # tranlation
