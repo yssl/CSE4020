@@ -220,23 +220,23 @@ def prepare_vao_frame():
 
     return VAO
 
-def draw_frame(vao, MVP, MVP_loc):
+def draw_frame(vao, MVP, loc_MVP):
     glBindVertexArray(vao)
-    glUniformMatrix4fv(MVP_loc, 1, GL_FALSE, glm.value_ptr(MVP))
+    glUniformMatrix4fv(loc_MVP, 1, GL_FALSE, glm.value_ptr(MVP))
     glDrawArrays(GL_LINES, 0, 6)
 
-def draw_cube(vao, MVP, MVP_loc):
+def draw_cube(vao, MVP, loc_MVP):
     glBindVertexArray(vao)
-    glUniformMatrix4fv(MVP_loc, 1, GL_FALSE, glm.value_ptr(MVP))
+    glUniformMatrix4fv(loc_MVP, 1, GL_FALSE, glm.value_ptr(MVP))
     glDrawArrays(GL_TRIANGLES, 0, 36)
 
-def draw_cube_array(vao, MVP, MVP_loc):
+def draw_cube_array(vao, MVP, loc_MVP):
     glBindVertexArray(vao)
     for i in range(5):
         for j in range(5):
             for k in range(5):
                 MVP_cube = MVP * glm.translate(glm.vec3(1*i, 1*j, 1*k)) * glm.scale(glm.vec3(.5,.5,.5))
-                glUniformMatrix4fv(MVP_loc, 1, GL_FALSE, glm.value_ptr(MVP_cube))
+                glUniformMatrix4fv(loc_MVP, 1, GL_FALSE, glm.value_ptr(MVP_cube))
                 glDrawArrays(GL_TRIANGLES, 0, 36)
 
 def main():
@@ -265,7 +265,7 @@ def main():
     shader_program = load_shaders(g_vertex_shader_src, g_fragment_shader_src)
 
     # get uniform locations
-    MVP_loc = glGetUniformLocation(shader_program, 'MVP')
+    loc_MVP = glGetUniformLocation(shader_program, 'MVP')
     
     # prepare vaos
     vao_cube = prepare_vao_cube()
@@ -295,7 +295,7 @@ def main():
         V = glm.lookAt(glm.vec3(1*np.sin(g_cam_ang),g_cam_height,1*np.cos(g_cam_ang)), glm.vec3(0,0,0), glm.vec3(0,1,0))
 
         # draw world frame
-        draw_frame(vao_frame, g_P*V*glm.mat4(), MVP_loc)
+        draw_frame(vao_frame, g_P*V*glm.mat4(), loc_MVP)
 
 
         # animating
@@ -311,10 +311,10 @@ def main():
         # M = R
 
         # # draw cube w.r.t. the current frame MVP
-        # draw_cube(vao_cube, g_P*V*M, MVP_loc)
+        # draw_cube(vao_cube, g_P*V*M, loc_MVP)
 
         # draw cube array w.r.t. the current frame MVP
-        draw_cube_array(vao_cube, g_P*V*M, MVP_loc)
+        draw_cube_array(vao_cube, g_P*V*M, loc_MVP)
 
 
         # swap front and back buffers

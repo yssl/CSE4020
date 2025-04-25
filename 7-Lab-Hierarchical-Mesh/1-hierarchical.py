@@ -222,17 +222,17 @@ def prepare_vao_frame():
 
     return VAO
 
-def draw_frame(vao, MVP, MVP_loc):
+def draw_frame(vao, MVP, loc_MVP):
     glBindVertexArray(vao)
-    glUniformMatrix4fv(MVP_loc, 1, GL_FALSE, glm.value_ptr(MVP))
+    glUniformMatrix4fv(loc_MVP, 1, GL_FALSE, glm.value_ptr(MVP))
     glDrawArrays(GL_LINES, 0, 6)
 
-def draw_node(vao, node, VP, MVP_loc, color_loc):
+def draw_node(vao, node, VP, loc_MVP, color_loc):
     MVP = VP * node.get_global_transform() * node.get_shape_transform()
     color = node.get_color()
 
     glBindVertexArray(vao)
-    glUniformMatrix4fv(MVP_loc, 1, GL_FALSE, glm.value_ptr(MVP))
+    glUniformMatrix4fv(loc_MVP, 1, GL_FALSE, glm.value_ptr(MVP))
     glUniform3f(color_loc, color.r, color.g, color.b)
     glDrawArrays(GL_TRIANGLES, 0, 6)
 
@@ -261,9 +261,9 @@ def main():
     shader_for_box = load_shaders(g_vertex_shader_src_color_uniform, g_fragment_shader_src)
 
     # get uniform locations
-    MVP_loc_frame = glGetUniformLocation(shader_for_frame, 'MVP')
-    MVP_loc_box = glGetUniformLocation(shader_for_box, 'MVP')
-    color_loc_box = glGetUniformLocation(shader_for_box, 'color')
+    loc_MVP_frame = glGetUniformLocation(shader_for_frame, 'MVP')
+    loc_MVP_box = glGetUniformLocation(shader_for_box, 'MVP')
+    loc_color_box = glGetUniformLocation(shader_for_box, 'color')
     
     # prepare vaos
     vao_box = prepare_vao_box()
@@ -287,7 +287,7 @@ def main():
 
         # draw world frame
         glUseProgram(shader_for_frame)
-        draw_frame(vao_frame, P*V*glm.mat4(), MVP_loc_frame)
+        draw_frame(vao_frame, P*V*glm.mat4(), loc_MVP_frame)
 
 
         t = glfwGetTime()
@@ -301,8 +301,8 @@ def main():
 
         # draw nodes
         glUseProgram(shader_for_box)
-        draw_node(vao_box, base, P*V, MVP_loc_box, color_loc_box)
-        draw_node(vao_box, arm, P*V, MVP_loc_box, color_loc_box)
+        draw_node(vao_box, base, P*V, loc_MVP_box, loc_color_box)
+        draw_node(vao_box, arm, P*V, loc_MVP_box, loc_color_box)
 
 
         # swap front and back buffers

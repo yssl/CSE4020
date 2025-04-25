@@ -165,7 +165,7 @@ def main():
     shader_program = load_shaders(g_vertex_shader_src, g_fragment_shader_src)
 
     # get uniform locations
-    MVP_loc = glGetUniformLocation(shader_program, 'MVP')
+    loc_MVP = glGetUniformLocation(shader_program, 'MVP')
     
     # prepare vaos
     vao_triangle = prepare_vao_triangle()
@@ -239,7 +239,7 @@ def main():
 
         # current frame: P*V*M
         MVP = P*V*M
-        glUniformMatrix4fv(MVP_loc, 1, GL_FALSE, glm.value_ptr(MVP))
+        glUniformMatrix4fv(loc_MVP, 1, GL_FALSE, glm.value_ptr(MVP))
 
         # draw triangle w.r.t. the current frame
         glBindVertexArray(vao_triangle)

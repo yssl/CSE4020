@@ -97,9 +97,9 @@ def main():
     shader_program = load_shaders(g_vertex_shader_src, g_fragment_shader_src)
 
     # get uniform locations and update uniforms
-    u_color_loc = glGetUniformLocation(shader_program, 'u_color') # find uniform's location
+    loc_u_color = glGetUniformLocation(shader_program, 'u_color') # find uniform's location
     glUseProgram(shader_program)    # updating uniform require you to first activate the shader program 
-    glUniform3f(u_color_loc, 0, 0, 1)   # set uniform's value
+    glUniform3f(loc_u_color, 0, 0, 1)   # set uniform's value
 
     # prepare vertex data (in main memory)
     vertices = glm.array(glm.float32,

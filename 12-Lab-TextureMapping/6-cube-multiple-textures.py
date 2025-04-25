@@ -253,9 +253,9 @@ def main():
     shader_program = load_shaders(g_vertex_shader_src, g_fragment_shader_src)
 
     # get uniform locations
-    MVP_loc = glGetUniformLocation(shader_program, 'MVP')
-    M_loc = glGetUniformLocation(shader_program, 'M')
-    view_pos_loc = glGetUniformLocation(shader_program, 'view_pos')
+    loc_MVP = glGetUniformLocation(shader_program, 'MVP')
+    loc_M = glGetUniformLocation(shader_program, 'M')
+    loc_view_pos = glGetUniformLocation(shader_program, 'view_pos')
 
     # prepare vaos
     vao_cube = prepare_vao_cube()
@@ -365,9 +365,9 @@ def main():
         # update uniforms
         MVP = P*V*M
         glUseProgram(shader_program)
-        glUniformMatrix4fv(MVP_loc, 1, GL_FALSE, glm.value_ptr(MVP))
-        glUniformMatrix4fv(M_loc, 1, GL_FALSE, glm.value_ptr(M))
-        glUniform3f(view_pos_loc, view_pos.x, view_pos.y, view_pos.z)
+        glUniformMatrix4fv(loc_MVP, 1, GL_FALSE, glm.value_ptr(MVP))
+        glUniformMatrix4fv(loc_M, 1, GL_FALSE, glm.value_ptr(M))
+        glUniform3f(loc_view_pos, view_pos.x, view_pos.y, view_pos.z)
 
         # draw cube w.r.t. the current frame MVP
         glBindVertexArray(vao_cube)

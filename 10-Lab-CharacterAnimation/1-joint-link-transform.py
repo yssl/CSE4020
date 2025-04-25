@@ -262,9 +262,9 @@ def main():
     shader_for_box = load_shaders(g_vertex_shader_src_color_uniform, g_fragment_shader_src)
 
     # get uniform locations
-    MVP_loc_frame = glGetUniformLocation(shader_for_frame, 'MVP')
-    MVP_loc_box = glGetUniformLocation(shader_for_box, 'MVP')
-    color_loc_box = glGetUniformLocation(shader_for_box, 'color')
+    loc_MVP_frame = glGetUniformLocation(shader_for_frame, 'MVP')
+    loc_MVP_box = glGetUniformLocation(shader_for_box, 'MVP')
+    loc_color_box = glGetUniformLocation(shader_for_box, 'color')
     
     # prepare vaos
     vao_box = prepare_vao_box()
@@ -288,7 +288,7 @@ def main():
 
         # draw world frame
         glUseProgram(shader_for_frame)
-        draw_frame(vao_frame, P*V*glm.mat4(), MVP_loc_frame)
+        draw_frame(vao_frame, P*V*glm.mat4(), loc_MVP_frame)
 
 
         t = glfwGetTime()
@@ -302,8 +302,8 @@ def main():
 
         # draw nodes
         glUseProgram(shader_for_box)
-        draw_node(vao_box, base, P*V, MVP_loc_box, color_loc_box)
-        draw_node(vao_box, arm, P*V, MVP_loc_box, color_loc_box)
+        draw_node(vao_box, base, P*V, loc_MVP_box, loc_color_box)
+        draw_node(vao_box, arm, P*V, loc_MVP_box, loc_color_box)
 
 
         # swap front and back buffers

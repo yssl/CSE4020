@@ -114,7 +114,7 @@ def main():
     shader_program = load_shaders(g_vertex_shader_src, g_fragment_shader_src)
 
     # get uniform locations
-    M_loc = glGetUniformLocation(shader_program, 'M')
+    loc_M = glGetUniformLocation(shader_program, 'M')
     
     # update uniforms 
     glUseProgram(shader_program)    # updating uniform require you to first activate the shader program 
@@ -140,7 +140,7 @@ def main():
         
     # note that 'transpose' (3rd parameter) is set to GL_TRUE
     # because numpy array is row-major.
-    glUniformMatrix3fv(M_loc, 1, GL_TRUE, M)
+    glUniformMatrix3fv(loc_M, 1, GL_TRUE, M)
 
 
     # prepare vertex data (in main memory)
