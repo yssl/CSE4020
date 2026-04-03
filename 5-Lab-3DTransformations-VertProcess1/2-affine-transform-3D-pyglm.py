@@ -199,7 +199,7 @@ def main():
         t = glfwGetTime()
 
         # rotation
-        th = np.radians(t*90)
+        th = glm.radians(t*90)
         R = glm.rotate(th, glm.vec3(0,0,1))
 
         # tranlation
