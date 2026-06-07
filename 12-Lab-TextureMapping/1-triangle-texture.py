@@ -40,7 +40,7 @@ in vec2 vout_uv;  // interpolated texture coordinates
 
 out vec4 FragColor;
 
-uniform sampler2D texture1;  // sampler2D: GLSL built-in datatype for 2D texture object
+uniform sampler2D texture1;  // sampler2D: GLSL built-in datatype for 2D texture object. The sampler does not store a texture object ID. Instead, it stores the texture unit index
 
 void main()
 {
@@ -179,8 +179,11 @@ def main():
     ############################################
     # texture
 
-    # create texture
+    # create texture object
     texture1 = glGenTextures(1)             # create texture object
+
+    # use texture unit 0
+    glActiveTexture(GL_TEXTURE0)
     glBindTexture(GL_TEXTURE_2D, texture1)  # activate texture1 as GL_TEXTURE_2D
 
     # set texture filtering parameters - skip at this moment
@@ -194,7 +197,7 @@ def main():
         # because OpenGL expects 0.0 on y-axis to be on the bottom edge, but images usually have 0.0 at the top of the y-axis
         img = img.transpose(Image.FLIP_TOP_BOTTOM)
 
-        # specify a 2D texture image
+        # upload image data to the currently bound texture object
         # glTexImage2D(target, level, texture internalformat, width, height, border, image data format, image data type, data)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.width, img.height, 0, GL_RGB, GL_UNSIGNED_BYTE, img.tobytes())
 
@@ -202,13 +205,13 @@ def main():
 
     except:
         print("Failed to load texture")
+        
+    # connect sampler to texture unit 0
+    loc_texture1 = glGetUniformLocation(shader_program, 'texture1')
+    glUseProgram(shader_program)    # updating uniform requires activating shader program
+    glUniform1i(loc_texture1, 0)
 
     ############################################
-
-    # if your triangle shows up as completely black, uncomment the following lines.
-    # glActiveTexture(GL_TEXTURE0)
-    # glBindTexture(GL_TEXTURE_2D, texture1)
-
 
     # loop until the user closes the window
     while not glfwWindowShouldClose(window):
@@ -247,4 +250,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
